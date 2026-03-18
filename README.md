@@ -56,10 +56,10 @@ curl "localhost:8443/maps/api/directions/json?origin=35.18,33.38&destination=34.
 ```
 
 ```json
-{"status":"OK","routes":[{"summary":"","legs":[{"distance":{"text":"84.7 km"},"duration":{"text":"1 hour 3 mins"},"steps":[...]}],"overview_polyline":{"points":"..."}}]}
+{"status":"OK","routes":[{"summary":"Lemesou","legs":[{"distance":{"text":"84.7 km"},"duration":{"text":"1 hour 3 mins"},"steps":[...]}],"overview_polyline":{"points":"..."}}]}
 ```
 
-Supports `driving`, `walking`, `bicycling` modes, `waypoints`, `alternatives`, `units`, `avoid` (tolls, highways, ferries), and `departure_time`. Returns routes, legs, steps, distances, durations, and encoded polylines — same structure as Google's response.
+Supports `driving`, `walking`, `bicycling` modes, `waypoints`, `alternatives`, `units`, `avoid` (tolls, highways, ferries), `departure_time`, and `language`. Returns routes, legs, steps with maneuver types and `html_instructions`, distances, durations, encoded polylines, bounds, and copyrights — same structure as Google's response.
 
 ## Google Routes API
 
@@ -88,6 +88,7 @@ Full API docs: [Valhalla API](https://valhalla.github.io/valhalla/api/turn-by-tu
 | 🇧🇪 | Belgium | 4.4 GB | `docker run -p 8002:8002 -p 2322:2322 -p 8443:8443 ghcr.io/roma8ok/getmapstack/belgium` |
 | 🇨🇾 | Cyprus | 0.6 GB | `docker run -p 8002:8002 -p 2322:2322 -p 8443:8443 ghcr.io/roma8ok/getmapstack/cyprus` |
 | 🇰🇷 | South Korea | 2.8 GB | `docker run -p 8002:8002 -p 2322:2322 -p 8443:8443 ghcr.io/roma8ok/getmapstack/south-korea` |
+| 🇻🇳 | Vietnam | 1.9 GB | `docker run -p 8002:8002 -p 2322:2322 -p 8443:8443 ghcr.io/roma8ok/getmapstack/vietnam` |
 
 ## License
 
