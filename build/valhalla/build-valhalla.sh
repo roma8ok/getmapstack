@@ -34,7 +34,12 @@ if [[ -z "$COUNTRY" || -z "$REGION" ]]; then
   usage
 fi
 
-PBF_URL="https://download.geofabrik.de/${REGION}/${COUNTRY}-latest.osm.pbf"
+# Geofabrik bundles some countries into a single extract
+case "$COUNTRY" in
+  malaysia|singapore|brunei) PBF_SLUG="malaysia-singapore-brunei" ;;
+  *) PBF_SLUG="$COUNTRY" ;;
+esac
+PBF_URL="https://download.geofabrik.de/${REGION}/${PBF_SLUG}-latest.osm.pbf"
 PBF_FILE="${WORK_DIR}/${COUNTRY}.osm.pbf"
 TILE_DIR="${WORK_DIR}/valhalla_tiles"
 CONFIG_FILE="${WORK_DIR}/valhalla.json"
