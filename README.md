@@ -12,6 +12,8 @@ Routing via [Valhalla](https://valhalla.github.io/valhalla/), geocoding via [Pho
 docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/cyprus
 ```
 
+Images are multi-arch: linux/amd64 and linux/arm64 (Apple Silicon, AWS Graviton).
+
 ## Verify
 
 Routing — Nicosia to Limassol:
