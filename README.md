@@ -62,6 +62,23 @@ Full API docs: [Valhalla API](https://valhalla.github.io/valhalla/api/turn-by-tu
 | 🇰🇷 | South Korea | 1.4 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/south-korea` |
 | 🇻🇳 | Vietnam | 0.8 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/vietnam` |
 
+## Build it yourself
+
+Requires Docker. Build a country image locally instead of pulling from GHCR:
+
+```
+git clone https://github.com/roma8ok/getmapstack.git
+cd getmapstack
+make build-valhalla-builder
+make build-photon-builder
+make create-valhalla-tiles COUNTRY=cyprus
+make create-photon-data COUNTRY=cyprus
+make build-server COUNTRY=cyprus
+docker run -p 8002:8002 -p 2322:2322 getmapstack/cyprus
+```
+
+Intermediate artifacts (routing tiles, geocoding index) land in `artifacts/`. Images build for linux/amd64 and linux/arm64 by default - pass `PLATFORMS=linux/arm64` (or your platform) for a faster single-arch build. `make help` lists all targets and available countries.
+
 ## License
 
 [MIT](LICENSE)
