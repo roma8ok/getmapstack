@@ -1,0 +1,217 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 440" width="880" role="img" aria-label="One docker run command starts a container with Valhalla routing on port 8002 and Photon geocoding on port 2322, backed by OSM data baked into the image; your application talks to both.">
+  <style>
+    :root {
+      --panel: #1e293b; --stroke: #334155; --text: #f1f5f9; --muted: #94a3b8;
+      --loop: 12s;
+      --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    }
+    text { font-family: var(--sans); fill: var(--text); }
+    .mono { font-family: var(--mono); }
+    .muted { fill: var(--muted); }
+    .cyan { fill: #22d3ee; }
+    .lime { fill: #a3e635; }
+    .wire { fill: none; stroke: var(--stroke); stroke-width: 1.5; }
+
+    /* --- boot prolog --- */
+    /* Narrative: 1) the docker run command types itself, 2) the container
+       comes up with its services, 3) your application appears, 4) requests
+       start flying. Base markup is fully visible: without animation support
+       (and, where honored inside img embeds, with reduced motion) this is a
+       static diagram. All timings derive from --loop (12s). */
+    #header-cmd { animation: type var(--loop) steps(40, end) infinite; }
+    #frame  { animation: reveal-frame var(--loop) linear infinite; }
+    #g-valhalla { animation: reveal-valhalla var(--loop) linear infinite; }
+    #g-photon   { animation: reveal-photon var(--loop) linear infinite; }
+    #g-osm      { animation: reveal-osm var(--loop) linear infinite; }
+    #app   { animation: reveal-app var(--loop) linear infinite; }
+    #wires { animation: reveal-app var(--loop) linear infinite; }
+    @keyframes type {
+      0%        { clip-path: inset(0 100% 0 0); }
+      14%, 100% { clip-path: inset(0 -2% 0 0); }
+    }
+    @keyframes reveal-frame {
+      0%, 15%   { opacity: 0; }
+      20%, 95%  { opacity: 1; }
+      99%, 100% { opacity: 0; }
+    }
+    @keyframes reveal-valhalla {
+      0%, 20%   { opacity: 0; transform: translateY(10px); }
+      24%, 95%  { opacity: 1; transform: translateY(0); }
+      99%, 100% { opacity: 0; }
+    }
+    @keyframes reveal-photon {
+      0%, 24%   { opacity: 0; transform: translateY(10px); }
+      28%, 95%  { opacity: 1; transform: translateY(0); }
+      99%, 100% { opacity: 0; }
+    }
+    @keyframes reveal-osm {
+      0%, 28%   { opacity: 0; transform: translateY(10px); }
+      32%, 95%  { opacity: 1; transform: translateY(0); }
+      99%, 100% { opacity: 0; }
+    }
+    @keyframes reveal-app {
+      0%, 33%   { opacity: 0; transform: translateY(-10px); }
+      38%, 95%  { opacity: 1; transform: translateY(0); }
+      99%, 100% { opacity: 0; }
+    }
+
+    /* --- request/response waves (start after the app appears) --- */
+    .dot { opacity: 0; }
+    #label-trip { opacity: 0; }
+    #label-features { opacity: 0; }
+    @supports (offset-path: path('M 0 0 H 1')) {
+      #req-valhalla {
+        offset-path: path('M 415 100 C 400 130, 310 150, 260 205');
+        animation: req-valhalla var(--loop) linear infinite;
+      }
+      #res-valhalla {
+        offset-path: path('M 260 205 C 310 150, 400 130, 415 100');
+        animation: res-valhalla var(--loop) linear infinite;
+      }
+      #valhalla-box { animation: glow-valhalla var(--loop) linear infinite; }
+      #label-trip { animation: label-trip var(--loop) linear infinite; }
+      #req-photon {
+        offset-path: path('M 465 100 C 480 130, 570 150, 620 205');
+        animation: req-photon var(--loop) linear infinite;
+      }
+      #res-photon {
+        offset-path: path('M 620 205 C 570 150, 480 130, 465 100');
+        animation: res-photon var(--loop) linear infinite;
+      }
+      #photon-box { animation: glow-photon var(--loop) linear infinite; }
+      #label-features { animation: label-features var(--loop) linear infinite; }
+    }
+    @keyframes req-valhalla {
+      0%, 40% { offset-distance: 0%;   opacity: 0; }
+      42%  { opacity: 1; }
+      45%  { opacity: 1; }
+      47%  { offset-distance: 100%; opacity: 0; }
+      100% { offset-distance: 100%; opacity: 0; }
+    }
+    @keyframes res-valhalla {
+      0%, 49% { offset-distance: 0%;   opacity: 0; }
+      51%     { opacity: 1; }
+      54%     { opacity: 1; }
+      56%     { offset-distance: 100%; opacity: 0; }
+      100%    { offset-distance: 100%; opacity: 0; }
+    }
+    @keyframes glow-valhalla {
+      0%, 48%   { stroke-width: 2; }
+      50%, 55%  { stroke-width: 4.5; }
+      59%, 100% { stroke-width: 2; }
+    }
+    @keyframes label-trip {
+      0%, 56%   { opacity: 0; }
+      58%, 63%  { opacity: 1; }
+      66%, 100% { opacity: 0; }
+    }
+    @keyframes req-photon {
+      0%, 62% { offset-distance: 0%;   opacity: 0; }
+      64%  { opacity: 1; }
+      67%  { opacity: 1; }
+      69%  { offset-distance: 100%; opacity: 0; }
+      100% { offset-distance: 100%; opacity: 0; }
+    }
+    @keyframes res-photon {
+      0%, 71% { offset-distance: 0%;   opacity: 0; }
+      73%     { opacity: 1; }
+      76%     { opacity: 1; }
+      78%     { offset-distance: 100%; opacity: 0; }
+      100%    { offset-distance: 100%; opacity: 0; }
+    }
+    @keyframes glow-photon {
+      0%, 70%   { stroke-width: 2; }
+      72%, 77%  { stroke-width: 4.5; }
+      81%, 100% { stroke-width: 2; }
+    }
+    @keyframes label-features {
+      0%, 78%   { opacity: 0; }
+      81%, 88%  { opacity: 1; }
+      92%, 100% { opacity: 0; }
+    }
+    /* the request labels light up for their service's exchange */
+    #label-post { animation: label-post var(--loop) linear infinite; }
+    @keyframes label-post {
+      0%, 38%   { opacity: 0.5; }
+      41%, 56%  { opacity: 1; }
+      60%, 100% { opacity: 0.5; }
+    }
+    #label-get { animation: label-get var(--loop) linear infinite; }
+    @keyframes label-get {
+      0%, 60%   { opacity: 0.5; }
+      63%, 78%  { opacity: 1; }
+      82%, 100% { opacity: 0.5; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #header-cmd, #frame, #app, #wires, #g-valhalla, #g-photon, #g-osm,
+      #req-valhalla, #res-valhalla, #valhalla-box, #label-trip, #label-post,
+      #req-photon, #res-photon, #photon-box, #label-features, #label-get { animation: none !important; }
+    }
+  </style>
+  <defs>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e1b4b"/><stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="grad-valhalla" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="grad-photon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a3e635"/><stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="880" height="440" rx="20" fill="url(#bg-grad)"/>
+
+  <!-- the drop shadow lives on the rects, not the groups: filtering a group
+       rasterizes its text and blurs it, while filtered rects keep text crisp -->
+  <g id="app">
+    <rect x="340" y="28" width="200" height="72" rx="14" fill="var(--panel)" stroke="var(--stroke)" stroke-width="1.5" filter="url(#soft)"/>
+    <text x="440" y="58" font-size="16" font-weight="600" text-anchor="middle">Your application</text>
+    <text class="muted" x="440" y="82" font-size="12" text-anchor="middle">any HTTP client</text>
+  </g>
+
+  <g id="wires">
+    <path id="wire-valhalla" class="wire" d="M 415 100 C 400 130, 310 150, 260 205"/>
+    <path id="wire-photon" class="wire" d="M 465 100 C 480 130, 570 150, 620 205"/>
+    <text id="label-post" class="mono cyan" x="255" y="140" font-size="13" text-anchor="middle">POST /route</text>
+    <text id="label-get" class="mono lime" x="627" y="140" font-size="13" text-anchor="middle">GET /api?q=</text>
+  </g>
+
+  <g id="container">
+    <rect id="frame" x="60" y="150" width="760" height="250" rx="18" fill="#0f172a" fill-opacity="0.5" stroke="var(--stroke)" stroke-width="1.5"/>
+    <text id="header-cmd" class="mono" x="440" y="188" font-size="13" text-anchor="middle" opacity="0.9"><tspan class="lime">$</tspan> docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/{country}</text>
+
+    <g id="g-valhalla">
+      <rect id="valhalla-box" x="95" y="205" width="330" height="95" rx="14" fill="var(--panel)" stroke="url(#grad-valhalla)" stroke-width="2" filter="url(#soft)"/>
+      <text x="120" y="243" font-size="18" font-weight="600">Valhalla</text>
+      <text class="muted" x="120" y="268" font-size="13">routing</text>
+      <text class="mono cyan" x="400" y="258" font-size="15" text-anchor="end">:8002</text>
+    </g>
+
+    <g id="g-photon">
+      <rect id="photon-box" x="455" y="205" width="330" height="95" rx="14" fill="var(--panel)" stroke="url(#grad-photon)" stroke-width="2" filter="url(#soft)"/>
+      <text x="480" y="243" font-size="18" font-weight="600">Photon</text>
+      <text class="muted" x="480" y="268" font-size="13">geocoding</text>
+      <text class="mono lime" x="760" y="258" font-size="15" text-anchor="end">:2322</text>
+    </g>
+
+    <g id="g-osm">
+      <rect x="95" y="325" width="690" height="52" rx="12" fill="var(--panel)" stroke="var(--stroke)" stroke-width="1.5" filter="url(#soft)"/>
+      <text class="muted" x="440" y="357" font-size="14" text-anchor="middle">Country OSM data, baked into the image</text>
+    </g>
+  </g>
+
+  <!-- animated request/response dots and labels (invisible when idle) -->
+  <g id="anim">
+    <circle id="req-valhalla" class="dot" r="6" fill="#22d3ee"/>
+    <circle id="res-valhalla" class="dot" r="6" fill="#22d3ee"/>
+    <text id="label-trip" class="mono cyan" x="320" y="52" font-size="12" text-anchor="end">{"trip": ...}</text>
+    <circle id="req-photon" class="dot" r="6" fill="#a3e635"/>
+    <circle id="res-photon" class="dot" r="6" fill="#a3e635"/>
+    <text id="label-features" class="mono lime" x="560" y="52" font-size="12" text-anchor="start">{"features": [...]}</text>
+  </g>
+</svg>

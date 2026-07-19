@@ -6,6 +6,8 @@ Replace Google Maps API — no API keys, no rate limits, no vendor lock-in.
 
 Routing via [Valhalla](https://valhalla.github.io/valhalla/), geocoding via [Photon](https://github.com/komoot/photon).
 
+<img src="https://raw.githubusercontent.com/roma8ok/getmapstack/main/assets/how-it-works.svg" width="880" alt="One docker run command starts a container with Valhalla routing on port 8002 and Photon geocoding on port 2322, backed by OSM data baked into the image; your application talks to both.">
+
 ## Quick start
 
 ```
