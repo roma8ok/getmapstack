@@ -39,8 +39,8 @@ COPY --from=valhalla /deps/lib/ /usr/local/lib/valhalla-deps/
 RUN echo "/usr/local/lib/valhalla-deps" > /etc/ld.so.conf.d/00-valhalla.conf && ldconfig
 RUN ! ldd /usr/local/bin/valhalla_service | grep -q 'not found'
 
-ADD --checksum=sha256:b2eaad11add95aad149d1e72e67a4df5f6694e725ac5363793a912c5b3e3a7df --chmod=644 \
-    https://github.com/komoot/photon/releases/download/1.0.0/photon-1.0.0.jar /opt/photon.jar
+ADD --checksum=sha256:6ea66d598a3f6fc1b59b0f81ad4f8abee72ccdb9d3db03bc12008974cdebd58d --chmod=644 \
+    https://github.com/komoot/photon/releases/download/1.2.1/photon-1.2.1.jar /opt/photon.jar
 
 RUN groupadd -r getmapstack && useradd -r -g getmapstack -d /data -s /sbin/nologin getmapstack
 

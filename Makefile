@@ -53,7 +53,7 @@ ifeq ($(REGION),)
 	$(error Unknown country: $(COUNTRY). Available: $(AVAILABLE_LIST))
 endif
 	mkdir -p artifacts
-	docker run --rm -v $(CURDIR)/artifacts:/artifacts getmapstack/photon-builder --country $(COUNTRY) --region $(REGION) --java-heap $(PHOTON_HEAP)
+	PHOTON_HEAP=$(PHOTON_HEAP) NOMI_SHARED_BUFFERS=$(NOMI_SHARED_BUFFERS) NOMI_MAINTENANCE_WORK_MEM=$(NOMI_MAINTENANCE_WORK_MEM) NOMI_READY_ATTEMPTS=$(NOMI_READY_ATTEMPTS) ./build/photon/run-nominatim-import.sh --country $(COUNTRY) --region $(REGION)
 
 build-server:
 ifndef COUNTRY
@@ -80,7 +80,7 @@ help::
 	@echo "  make build-valhalla-builder                   Build the Valhalla builder Docker image"
 	@echo "  make create-valhalla-tiles COUNTRY=cyprus      Build routing tiles for a country"
 	@echo "  make build-photon-builder                     Build the Photon builder Docker image"
-	@echo "  make create-photon-data COUNTRY=cyprus         Download and import geocoding data"
+	@echo "  make create-photon-data COUNTRY=cyprus         Build geocoding data via Nominatim import"
 	@echo ""
 	@echo "  Server image (routing + geocoding):"
 	@echo "  make build-server COUNTRY=cyprus               Build server image getmapstack/cyprus"

@@ -40,7 +40,7 @@ case "$COUNTRY" in
   *) PBF_SLUG="$COUNTRY" ;;
 esac
 PBF_URL="https://download.geofabrik.de/${REGION}/${PBF_SLUG}-latest.osm.pbf"
-PBF_FILE="${WORK_DIR}/${COUNTRY}.osm.pbf"
+PBF_FILE="${ARTIFACTS_DIR}/osm/${PBF_SLUG}.osm.pbf"
 TILE_DIR="${WORK_DIR}/valhalla_tiles"
 CONFIG_FILE="${WORK_DIR}/valhalla.json"
 
@@ -52,14 +52,19 @@ echo "Concurrency: ${CONCURRENCY}"
 echo ""
 
 # Step 1: Setup
-mkdir -p "${TILE_DIR}" "${ARTIFACTS_DIR}"
+mkdir -p "${TILE_DIR}" "${ARTIFACTS_DIR}" "${ARTIFACTS_DIR}/osm"
 
-# Step 2: Download PBF
+# Step 2: Download PBF (conditional GET: re-fetch only when Geofabrik has a newer snapshot)
 echo "=== Downloading PBF ==="
 if [[ -f "${PBF_FILE}" ]]; then
-  echo "PBF already exists, skipping download"
+  HTTP_CODE=$(curl -L --fail --progress-bar --remove-on-error --retry 3 -R -z "${PBF_FILE}" -o "${PBF_FILE}" -w '%{response_code}' "${PBF_URL}")
+  if [[ "${HTTP_CODE}" == "304" ]]; then
+    echo "PBF up to date, reusing cached copy (HTTP 304)"
+  else
+    echo "PBF refreshed (HTTP ${HTTP_CODE})"
+  fi
 else
-  curl -L --fail --progress-bar -o "${PBF_FILE}" "${PBF_URL}"
+  curl -L --fail --progress-bar --remove-on-error --retry 3 -R -o "${PBF_FILE}" "${PBF_URL}"
 fi
 echo "PBF size: $(du -h "${PBF_FILE}" | cut -f1)"
 
