@@ -1,0 +1,18 @@
+Getmapstack image - data attribution
+
+Map data (c) OpenStreetMap contributors, available under the Open Database
+License (ODbL) 1.0: https://opendatacommons.org/licenses/odbl/1-0/
+
+The databases in this directory - Valhalla routing tiles (valhalla.tar) and
+the Photon geocoding index (photon/) - are derived from OpenStreetMap data
+via Geofabrik extracts (https://download.geofabrik.de/) and are made
+available under ODbL 1.0.
+
+Build scripts and full notices: https://github.com/roma8ok/getmapstack
+(NOTICE in the repository root; third-party software licenses at
+/usr/share/doc/getmapstack/THIRD_PARTY_LICENSES in this image).
+
+If you publicly use routing or geocoding results from this image (for
+example in an application or on a map), you must credit OpenStreetMap:
+"(c) OpenStreetMap contributors" with a link to
+https://www.openstreetmap.org/copyright

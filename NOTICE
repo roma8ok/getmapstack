@@ -1,0 +1,34 @@
+Getmapstack - NOTICE
+
+Code
+
+  The source code in this repository is licensed under the MIT License
+  (see LICENSE).
+
+Map data
+
+  The Docker images published from this project embed databases derived from
+  OpenStreetMap data: Valhalla routing tiles and a Photon geocoding index.
+
+  Map data (c) OpenStreetMap contributors, available under the Open Database
+  License (ODbL) 1.0: https://opendatacommons.org/licenses/odbl/1-0/
+  OSM extracts are downloaded from Geofabrik: https://download.geofabrik.de/
+
+  These derivative databases are themselves made available under ODbL 1.0.
+  Per ODbL section 4.6, the full derivative databases are the freely pullable
+  images at ghcr.io/roma8ok/getmapstack/{country}, and the method of creating
+  them is the public build pipeline in build/valhalla/ and build/photon/
+  applied to the Geofabrik extracts above.
+
+  If you publicly use routing or geocoding results from these images (for
+  example in an application or on a map), you must credit OpenStreetMap:
+  "(c) OpenStreetMap contributors" with a link to
+  https://www.openstreetmap.org/copyright
+  See: https://osmfoundation.org/wiki/Licence/Attribution_Guidelines
+
+Third-party software
+
+  The published images also bundle third-party software components (Valhalla,
+  prime_server, Photon, Ubuntu packages). Their license texts ship inside
+  each image: see /usr/share/doc/getmapstack/THIRD_PARTY_LICENSES and
+  /usr/share/doc/valhalla-deps/.

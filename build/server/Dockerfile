@@ -1,10 +1,25 @@
 FROM ghcr.io/valhalla/valhalla:3.6.3 AS valhalla
 
-# Collect valhalla_service and all its shared libs into /deps
-RUN mkdir -p /deps/bin /deps/lib && \
+# Collect valhalla_service, its shared libs, and their license texts into /deps.
+# dpkg -S needs realpath (merged-/usr: ldd prints /lib/..., dpkg records
+# /usr/lib/...) and the arch qualifier stripped (libc6:arm64 -> libc6).
+# Only libprime_server.so.0 has no dpkg owner; its license ships in
+# THIRD_PARTY_LICENSES. Any other unowned lib fails the build.
+RUN mkdir -p /deps/bin /deps/lib /deps/doc/valhalla && \
     cp /usr/local/bin/valhalla_service /deps/bin/ && \
+    cp /usr/local/share/doc/valhalla/COPYING /deps/doc/valhalla/COPYING && \
     for lib in $(ldd /usr/local/bin/valhalla_service | grep -v 'not found' | awk '/=>/ {print $3}'); do \
         cp "$lib" /deps/lib/; \
+        pkg=$(dpkg -S "$(realpath "$lib")" 2>/dev/null | cut -d: -f1); \
+        if [ -n "$pkg" ]; then \
+            mkdir -p "/deps/doc/$pkg"; \
+            cp "/usr/share/doc/$pkg/copyright" "/deps/doc/$pkg/copyright" || { echo "ERROR: no copyright file for $pkg" >&2; exit 1; }; \
+        else \
+            case "$(basename "$lib")" in \
+                libprime_server*) ;; \
+                *) echo "ERROR: $lib has no dpkg owner and no THIRD_PARTY_LICENSES entry" >&2; exit 1 ;; \
+            esac; \
+        fi; \
     done
 
 # Runs natively on the build host ($BUILDPLATFORM) so the multi-GB tar
@@ -21,6 +36,7 @@ RUN --mount=type=bind,source=photon-data.tar,target=/tmp/photon-data.tar \
     mkdir -p /out/photon && tar -xf /tmp/photon-data.tar -C /out/photon
 COPY valhalla.tar /out/valhalla.tar
 COPY valhalla.json /out/valhalla.json
+COPY ATTRIBUTION.txt /out/ATTRIBUTION.txt
 
 FROM ubuntu:24.04
 
@@ -46,10 +62,15 @@ RUN groupadd -r getmapstack && useradd -r -g getmapstack -d /data -s /sbin/nolog
 
 COPY --from=data --chown=getmapstack:getmapstack /out /data
 
+# Third-party license notices for the cherry-picked binary and libraries
+COPY --from=valhalla /deps/doc/ /usr/share/doc/valhalla-deps/
+COPY THIRD_PARTY_LICENSES /usr/share/doc/getmapstack/THIRD_PARTY_LICENSES
+
 COPY --chmod=755 entrypoint.sh /entrypoint.sh
 USER getmapstack
 
-LABEL org.opencontainers.image.source="https://github.com/roma8ok/getmapstack"
+LABEL org.opencontainers.image.source="https://github.com/roma8ok/getmapstack" \
+      org.opencontainers.image.licenses="MIT AND ODbL-1.0"
 
 EXPOSE 8002 2322
 

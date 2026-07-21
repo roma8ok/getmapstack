@@ -1,0 +1,52 @@
+Third-party software bundled in this image
+==========================================
+
+Valhalla (routing engine, /usr/local/bin/valhalla_service)
+  License: MIT
+  Copyright (c) 2018 Valhalla contributors
+  Copyright (c) 2015-2017 Mapillary AB, Mapzen
+  Full text: /usr/share/doc/valhalla-deps/valhalla/COPYING
+  Source: https://github.com/valhalla/valhalla
+
+Photon 1.2.1 (geocoding server, /opt/photon.jar)
+  License: Apache License 2.0
+  Full text: inside the jar (META-INF/LICENSE.txt) and at
+  /usr/share/common-licenses/Apache-2.0
+  Source: https://github.com/komoot/photon
+
+Ubuntu-packaged shared libraries (/usr/local/lib/valhalla-deps/)
+  Each library's Debian copyright file ships at
+  /usr/share/doc/valhalla-deps/<package>/copyright; referenced full license
+  texts are at /usr/share/common-licenses/. Source code for Ubuntu-packaged
+  components (including the base system and OpenJDK) is available from
+  Ubuntu's source archives for the noble release:
+  https://packages.ubuntu.com/noble/
+
+prime_server (/usr/local/lib/valhalla-deps/libprime_server.so.0)
+  License: BSD 2-Clause
+  Source: https://github.com/kevinkreiser/prime_server
+  Full license text:
+
+  Copyright (c) 2015, Kevin Kreiser
+  All rights reserved.
+  
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+  
+  * Redistributions of source code must retain the above copyright notice, this
+    list of conditions and the following disclaimer.
+  
+  * Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

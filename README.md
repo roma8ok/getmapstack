@@ -83,4 +83,6 @@ Intermediate artifacts (routing tiles, geocoding index) land in `artifacts/`. Im
 
 ## License
 
-[MIT](LICENSE)
+Code: [MIT](LICENSE). Map data: © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/), sourced from [Geofabrik](https://download.geofabrik.de/) extracts.
+
+The images embed OSM-derived databases (routing tiles, geocoding index) redistributed under ODbL 1.0 - see [NOTICE](NOTICE) for full attribution. If you publicly use routing or geocoding results from these images, credit OpenStreetMap: "© OpenStreetMap contributors" linked to [openstreetmap.org/copyright](https://www.openstreetmap.org/copyright).
