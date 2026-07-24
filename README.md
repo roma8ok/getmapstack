@@ -59,6 +59,7 @@ Full API docs: [Valhalla API](https://valhalla.github.io/valhalla/api/turn-by-tu
 | 🇧🇳 | Brunei | 0.5 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/brunei` |
 | 🇨🇾 | Cyprus | 0.3 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/cyprus` |
 | 🇮🇩 | Indonesia | 1.5 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/indonesia` |
+| 🇰🇿 | Kazakhstan | 1.0 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/kazakhstan` |
 | 🇲🇾 | Malaysia | 0.8 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/malaysia` |
 | 🇸🇬 | Singapore | 0.5 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/singapore` |
 | 🇰🇷 | South Korea | 1.4 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/south-korea` |

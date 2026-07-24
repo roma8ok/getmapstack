@@ -40,6 +40,13 @@ echo ""
 
 mkdir -p "${WORK_DIR}" "${ARTIFACTS_DIR}"
 
+# Photon flushes bulk requests every 10k docs, sized at a flat 1 KB each without
+# -full-geometry, so heavy documents (-extra-tags ALL, many name:* translations) can
+# push one bulk past the embedded OpenSearch default http.max_content_length of 100 MB
+# (HTTP 413). The node reads opensearch.yml only when absent, so pre-seed a raised cap.
+mkdir -p "${WORK_DIR}/photon_data/node_1/config"
+printf 'http.max_content_length: 1000mb\n' > "${WORK_DIR}/photon_data/node_1/config/opensearch.yml"
+
 echo "=== Importing from Nominatim into Photon ==="
 java -Xmx"${JAVA_HEAP}" -jar /opt/photon.jar import \
   -host "${DB_HOST}" -port "${DB_PORT}" -database "${DB_NAME}" \

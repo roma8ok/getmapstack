@@ -26,6 +26,7 @@ case "$COUNTRY" in
   brunei) CC="bn" ;;
   cyprus) CC="cy" ;;
   indonesia) CC="id" ;;
+  kazakhstan) CC="kz" ;;
   malaysia) CC="my" ;;
   singapore) CC="sg" ;;
   south-korea) CC="kr" ;;
