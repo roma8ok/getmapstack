@@ -2,9 +2,9 @@
 
 Self-hosted mapping stack. One command per country.
 
-Replace Google Maps API — no API keys, no rate limits, no vendor lock-in.
+Replace Google Maps API - no API keys, no rate limits, no vendor lock-in.
 
-Routing via [Valhalla](https://valhalla.github.io/valhalla/), geocoding via [Photon](https://github.com/komoot/photon).
+Routing via [Valhalla](https://valhalla.github.io/valhalla/) 3.8.3, geocoding via [Photon](https://github.com/komoot/photon) 1.2.1.
 
 <img src="https://raw.githubusercontent.com/roma8ok/getmapstack/main/assets/how-it-works.svg" width="880" alt="One docker run command starts a container with Valhalla routing on port 8002 and Photon geocoding on port 2322, backed by OSM data baked into the image; your application talks to both.">
 
@@ -18,7 +18,7 @@ Images are multi-arch: linux/amd64 and linux/arm64 (Apple Silicon, AWS Graviton)
 
 ## Verify
 
-Routing — Nicosia to Limassol:
+Routing - Nicosia to Limassol:
 
 ```
 curl localhost:8002/route \
@@ -26,27 +26,27 @@ curl localhost:8002/route \
 ```
 
 ```json
-{"trip":{"summary":{"length":84.737,"time":3770.235,"has_highway":true}}}
+{"trip":{"summary":{"length":84.229,"time":3743.53,"has_highway":true}}}
 ```
 
-Geocoding — search for "Nicosia":
+Geocoding - search for "Nicosia":
 
 ```
 curl "localhost:2322/api?q=Nicosia&limit=1"
 ```
 
 ```json
-{"features":[{"properties":{"name":"Λευκωσία - Lefkoşa","type":"city","country":"Κύπρος - Kıbrıs"}}]}
+{"features":[{"properties":{"name":"Λευκωσία - Lefkoşa","type":"district","country":"Κύπρος - Kıbrıs"}}]}
 ```
 
-Reverse geocoding — coordinates to address:
+Reverse geocoding - coordinates to address:
 
 ```
-curl "localhost:2322/reverse?lon=33.38&lat=35.18&limit=1"
+curl "localhost:2322/reverse?lon=33.3825&lat=35.1853&limit=1"
 ```
 
 ```json
-{"features":[{"properties":{"street":"Zappeiou","housenumber":"21","city":"Λευκωσία - Lefkoşa"}}]}
+{"features":[{"properties":{"street":"Zappeiou","housenumber":"21","city":"Λευκωσία"}}]}
 ```
 
 Full API docs: [Valhalla API](https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/) · [Photon API](https://github.com/komoot/photon/blob/master/docs/api-v1.md)
@@ -55,15 +55,15 @@ Full API docs: [Valhalla API](https://valhalla.github.io/valhalla/api/turn-by-tu
 
 | | Country | Size | Run |
 |---|---------|------|-----|
-| 🇧🇪 | Belgium | 2.2 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/belgium` |
+| 🇧🇪 | Belgium | 1.9 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/belgium` |
 | 🇧🇳 | Brunei | 0.5 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/brunei` |
 | 🇨🇾 | Cyprus | 0.3 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/cyprus` |
 | 🇮🇩 | Indonesia | 1.5 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/indonesia` |
 | 🇰🇿 | Kazakhstan | 1.0 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/kazakhstan` |
 | 🇲🇾 | Malaysia | 0.8 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/malaysia` |
-| 🇸🇬 | Singapore | 0.5 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/singapore` |
-| 🇰🇷 | South Korea | 1.4 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/south-korea` |
-| 🇻🇳 | Vietnam | 0.8 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/vietnam` |
+| 🇸🇬 | Singapore | 0.6 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/singapore` |
+| 🇰🇷 | South Korea | 1.5 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/south-korea` |
+| 🇻🇳 | Vietnam | 0.9 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/vietnam` |
 
 ## Build it yourself
 

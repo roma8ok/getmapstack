@@ -1,4 +1,4 @@
-FROM ghcr.io/valhalla/valhalla:3.6.3 AS valhalla
+FROM ghcr.io/valhalla/valhalla:3.8.3 AS valhalla
 
 # Collect valhalla_service, its shared libs, and their license texts into /deps.
 # dpkg -S needs realpath (merged-/usr: ldd prints /lib/..., dpkg records
