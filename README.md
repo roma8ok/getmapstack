@@ -16,6 +16,21 @@ docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/cyprus
 
 Images are multi-arch: linux/amd64 and linux/arm64 (Apple Silicon, AWS Graviton).
 
+## Hosted API
+
+Try the stack without installing - the same services for all supported countries at `https://api.getmapstack.com` (`/valhalla` and `/photon` prefixes):
+
+```
+curl https://api.getmapstack.com/valhalla/route \
+  -d '{"locations":[{"lat":35.18,"lon":33.38},{"lat":34.67,"lon":33.04}],"costing":"auto"}'
+```
+
+```
+curl "https://api.getmapstack.com/photon/api?q=Nicosia&limit=1"
+```
+
+Please keep your usage fair. No SLA - this is a demo that may change or disappear; run your own container for unlimited use.
+
 ## Verify
 
 Routing - Nicosia to Limassol:
