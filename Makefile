@@ -28,10 +28,21 @@ VALHALLA_CONCURRENCY ?=
 # Target platforms for server images; override for single-arch dev builds (e.g. PLATFORMS=linux/arm64)
 PLATFORMS ?= linux/amd64,linux/arm64
 
-.PHONY: build-valhalla-builder create-valhalla-tiles build-photon-builder create-photon-data build-server help
+.PHONY: build-valhalla-builder create-valhalla-tiles build-photon-builder create-photon-data build-server fetch-osm help
 
 build-valhalla-builder:
+	cp build/pbf-slugs.txt build/valhalla/pbf-slugs.txt
 	docker build -t getmapstack/valhalla-builder ./build/valhalla
+	rm build/valhalla/pbf-slugs.txt
+
+fetch-osm:
+ifndef COUNTRY
+	$(error COUNTRY is required. Usage: make fetch-osm COUNTRY=cyprus)
+endif
+ifeq ($(REGION),)
+	$(error Unknown country: $(COUNTRY). Available: $(AVAILABLE_LIST))
+endif
+	./build/fetch-osm.sh --country $(COUNTRY) --region $(REGION)
 
 create-valhalla-tiles:
 ifndef COUNTRY
@@ -79,6 +90,7 @@ help::
 	@echo ""
 	@echo "  Builders:"
 	@echo "  make build-valhalla-builder                   Build the Valhalla builder Docker image"
+	@echo "  make fetch-osm COUNTRY=cyprus                 Download the OSM extract and pin its snapshot date"
 	@echo "  make create-valhalla-tiles COUNTRY=cyprus      Build routing tiles for a country"
 	@echo "  make build-photon-builder                     Build the Photon builder Docker image"
 	@echo "  make create-photon-data COUNTRY=cyprus         Build geocoding data via Nominatim import"

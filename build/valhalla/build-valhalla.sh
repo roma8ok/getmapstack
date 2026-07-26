@@ -34,13 +34,15 @@ if [[ -z "$COUNTRY" || -z "$REGION" ]]; then
   usage
 fi
 
-# Geofabrik bundles some countries into a single extract
-case "$COUNTRY" in
-  malaysia|singapore|brunei) PBF_SLUG="malaysia-singapore-brunei" ;;
-  *) PBF_SLUG="$COUNTRY" ;;
-esac
+# Geofabrik bundles some countries into a single extract. build/pbf-slugs.txt is the
+# single source of truth, baked into this image at build time.
+SLUG_TABLE="/usr/local/share/getmapstack/pbf-slugs.txt"
+[[ -f "$SLUG_TABLE" ]] || { echo "Error: slug table not found: $SLUG_TABLE"; exit 1; }
+PBF_SLUG=$(awk -v c="$COUNTRY" '/^#/ { next } $1 == c { print $2; exit }' "$SLUG_TABLE")
+PBF_SLUG="${PBF_SLUG:-$COUNTRY}"
 PBF_URL="https://download.geofabrik.de/${REGION}/${PBF_SLUG}-latest.osm.pbf"
 PBF_FILE="${ARTIFACTS_DIR}/osm/${PBF_SLUG}.osm.pbf"
+DATE_FILE="${ARTIFACTS_DIR}/osm/${PBF_SLUG}.date"
 TILE_DIR="${WORK_DIR}/valhalla_tiles"
 CONFIG_FILE="${WORK_DIR}/valhalla.json"
 
@@ -54,17 +56,27 @@ echo ""
 # Step 1: Setup
 mkdir -p "${TILE_DIR}" "${ARTIFACTS_DIR}" "${ARTIFACTS_DIR}/osm"
 
-# Step 2: Download PBF (conditional GET: re-fetch only when Geofabrik has a newer snapshot)
+# Step 2: Download PBF. A date file written by fetch-osm.sh pins the snapshot for the
+# whole country build - refreshing here could advance the data mid-build and desync the
+# routing tiles from the geocoding index. Without it, fall back to a conditional GET.
 echo "=== Downloading PBF ==="
-if [[ -f "${PBF_FILE}" ]]; then
-  HTTP_CODE=$(curl -L --fail --progress-bar --remove-on-error --retry 3 -R -z "${PBF_FILE}" -o "${PBF_FILE}" -w '%{response_code}' "${PBF_URL}")
-  if [[ "${HTTP_CODE}" == "304" ]]; then
-    echo "PBF up to date, reusing cached copy (HTTP 304)"
-  else
-    echo "PBF refreshed (HTTP ${HTTP_CODE})"
-  fi
+if [[ -f "${DATE_FILE}" && -f "${PBF_FILE}" ]]; then
+  echo "Using pinned PBF snapshot $(cat "${DATE_FILE}") - skipping refresh"
 else
-  curl -L --fail --progress-bar --remove-on-error --retry 3 -R -o "${PBF_FILE}" "${PBF_URL}"
+  # Not pinned, or the pin lost its PBF: any surviving sidecar no longer describes what
+  # we are about to hold, so drop it before fetching. A sidecar must only ever exist
+  # alongside the bytes it describes.
+  rm -f "${DATE_FILE}"
+  if [[ -f "${PBF_FILE}" ]]; then
+    HTTP_CODE=$(curl -L --fail --progress-bar --remove-on-error --retry 3 -R -z "${PBF_FILE}" -o "${PBF_FILE}" -w '%{response_code}' "${PBF_URL}")
+    if [[ "${HTTP_CODE}" == "304" ]]; then
+      echo "PBF up to date, reusing cached copy (HTTP 304)"
+    else
+      echo "PBF refreshed (HTTP ${HTTP_CODE})"
+    fi
+  else
+    curl -L --fail --progress-bar --remove-on-error --retry 3 -R -o "${PBF_FILE}" "${PBF_URL}"
+  fi
 fi
 echo "PBF size: $(du -h "${PBF_FILE}" | cut -f1)"
 

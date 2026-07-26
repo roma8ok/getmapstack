@@ -13,12 +13,6 @@ while [[ $# -gt 0 ]]; do
 done
 [[ -z "$COUNTRY" || -z "$REGION" ]] && { echo "Error: --country and --region required"; exit 1; }
 
-# Geofabrik bundles some countries into a single extract (match build-valhalla.sh).
-case "$COUNTRY" in
-  malaysia|singapore|brunei) PBF_SLUG="malaysia-singapore-brunei" ;;
-  *) PBF_SLUG="$COUNTRY" ;;
-esac
-
 # ISO 3166-1 alpha-2 for the -country-codes Photon filter (also the hook for a
 # future per-region batch import).
 case "$COUNTRY" in
@@ -34,17 +28,24 @@ case "$COUNTRY" in
   *) echo "Error: no ISO country code mapped for '$COUNTRY'. Add it to run-nominatim-import.sh."; exit 1 ;;
 esac
 
-# Resource knobs, env-tunable; defaults sized for an ~8GB host - raise on the build server for large countries.
+# Resource knobs, env-tunable; defaults sized for an ~8GB host - raise them on a bigger machine for large countries.
 : "${NOMI_SHARED_BUFFERS:=256MB}"
 : "${NOMI_MAINTENANCE_WORK_MEM:=512MB}"
 : "${NOMI_READY_ATTEMPTS:=900}"
 : "${PHOTON_HEAP:=4g}"
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+# Geofabrik bundles some countries into a single extract. build/pbf-slugs.txt is the
+# single source of truth, shared with build/fetch-osm.sh and the valhalla builder.
+SLUG_TABLE="$ROOT/build/pbf-slugs.txt"
+[[ -f "$SLUG_TABLE" ]] || { echo "Error: slug table not found: $SLUG_TABLE"; exit 1; }
+PBF_SLUG=$(awk -v c="$COUNTRY" '/^#/ { next } $1 == c { print $2; exit }' "$SLUG_TABLE")
+PBF_SLUG="${PBF_SLUG:-$COUNTRY}"
 # CACHE_DIR: reserved for a future per-region importance-dump cache; unused today.
 OSM_DIR="$ROOT/artifacts/osm"; CACHE_DIR="$ROOT/artifacts/cache"; ART_DIR="$ROOT/artifacts"
 mkdir -p "$OSM_DIR" "$CACHE_DIR" "$ART_DIR"
 PBF_FILE="$OSM_DIR/${PBF_SLUG}.osm.pbf"
+DATE_FILE="$OSM_DIR/${PBF_SLUG}.date"
 PBF_URL="https://download.geofabrik.de/${REGION}/${PBF_SLUG}-latest.osm.pbf"
 
 # NET/NOMI are fixed container/network names - concurrent runs on one host are
@@ -58,17 +59,27 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Step A: shared PBF - conditional GET, re-fetch only when Geofabrik has a newer snapshot.
-echo "Ensuring PBF is fresh: $PBF_SLUG"
-if [[ -f "$PBF_FILE" ]]; then
-  HTTP_CODE=$(curl -L --fail --progress-bar --remove-on-error --retry 3 -R -z "$PBF_FILE" -o "$PBF_FILE" -w '%{response_code}' "$PBF_URL")
-  if [[ "$HTTP_CODE" == "304" ]]; then
-    echo "PBF up to date, reusing cached copy (HTTP 304)"
-  else
-    echo "PBF refreshed (HTTP $HTTP_CODE)"
-  fi
+# Step A: shared PBF. A date file written by fetch-osm.sh pins the snapshot for the whole
+# country build - refreshing here could pull a newer extract than the routing tiles were
+# built from. Without it, fall back to a conditional GET.
+if [[ -f "$DATE_FILE" && -f "$PBF_FILE" ]]; then
+  echo "Using pinned PBF snapshot $(cat "$DATE_FILE") - skipping refresh"
 else
-  curl -L --fail --progress-bar --remove-on-error --retry 3 -R -o "$PBF_FILE" "$PBF_URL"
+  # Not pinned, or the pin lost its PBF: any surviving sidecar no longer describes what
+  # we are about to hold, so drop it before fetching. A sidecar must only ever exist
+  # alongside the bytes it describes.
+  rm -f "$DATE_FILE"
+  echo "Ensuring PBF is fresh: $PBF_SLUG"
+  if [[ -f "$PBF_FILE" ]]; then
+    HTTP_CODE=$(curl -L --fail --progress-bar --remove-on-error --retry 3 -R -z "$PBF_FILE" -o "$PBF_FILE" -w '%{response_code}' "$PBF_URL")
+    if [[ "$HTTP_CODE" == "304" ]]; then
+      echo "PBF up to date, reusing cached copy (HTTP 304)"
+    else
+      echo "PBF refreshed (HTTP $HTTP_CODE)"
+    fi
+  else
+    curl -L --fail --progress-bar --remove-on-error --retry 3 -R -o "$PBF_FILE" "$PBF_URL"
+  fi
 fi
 
 # Step B: scratch network + transient Nominatim with throwaway-DB tuning.

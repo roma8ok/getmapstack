@@ -1,0 +1,6 @@
+# Geofabrik bundles some countries into a single extract. A country absent from this
+# table uses its own name as the slug.
+# <country>   <pbf-slug>
+brunei        malaysia-singapore-brunei
+malaysia      malaysia-singapore-brunei
+singapore     malaysia-singapore-brunei
