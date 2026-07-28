@@ -13,8 +13,10 @@ usage() {
   echo ""
   echo "Examples:"
   echo "  build-valhalla.sh --country cyprus --region europe"
-  echo "  build-valhalla.sh --country germany --region europe"
-  echo "  build-valhalla.sh --country philippines --region asia"
+  echo "  build-valhalla.sh --country vietnam --region asia"
+  echo ""
+  echo "Any country with a Geofabrik extract works, not only the prebuilt images:"
+  echo "pass its name and the region it sits in on download.geofabrik.de."
   exit 1
 }
 
