@@ -74,7 +74,7 @@ LABEL org.opencontainers.image.source="https://github.com/roma8ok/getmapstack" \
 
 EXPOSE 8002 2322
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5m \
   CMD curl -sf http://localhost:8002/status && curl -sf http://localhost:2322/status || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
