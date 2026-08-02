@@ -8,7 +8,8 @@ Code
 Map data
 
   The Docker images published from this project embed databases derived from
-  OpenStreetMap data: Valhalla routing tiles and a Photon geocoding index.
+  OpenStreetMap data: Valhalla routing tiles, a Photon geocoding index, and a
+  PMTiles vector tile database.
 
   Map data (c) OpenStreetMap contributors, available under the Open Database
   License (ODbL) 1.0: https://opendatacommons.org/licenses/odbl/1-0/
@@ -17,8 +18,8 @@ Map data
   These derivative databases are themselves made available under ODbL 1.0.
   Per ODbL section 4.6, the full derivative databases are the freely pullable
   images at ghcr.io/roma8ok/getmapstack/{country}, and the method of creating
-  them is the public build pipeline in build/valhalla/ and build/photon/
-  applied to the Geofabrik extracts above.
+  them is the public build pipeline in build/valhalla/, build/photon/, and
+  build/planetiler/ applied to the Geofabrik extracts above.
 
   If you publicly use routing or geocoding results from these images (for
   example in an application or on a map), you must credit OpenStreetMap:
@@ -26,9 +27,19 @@ Map data
   https://www.openstreetmap.org/copyright
   See: https://osmfoundation.org/wiki/Licence/Attribution_Guidelines
 
+  The vector tile schema follows OpenMapTiles, available under CC-BY 4.0:
+  https://openmaptiles.org/ Low-zoom context data comes from Natural Earth,
+  public domain: https://www.naturalearthdata.com/ Coastline water polygons
+  come from osmdata.openstreetmap.de, available under ODbL 1.0. Maps rendered
+  from these tiles must show visible credit:
+  "(c) OpenMapTiles (c) OpenStreetMap contributors"
+
 Third-party software
 
   The published images also bundle third-party software components (Valhalla,
-  prime_server, Photon, Ubuntu packages). Their license texts ship inside
-  each image: see /usr/share/doc/getmapstack/THIRD_PARTY_LICENSES and
+  prime_server, Photon, Martin, Ubuntu packages) and third-party map design
+  assets: bundled Noto fonts, and the OpenFreeMap Bright style with its icons
+  (https://github.com/hyperknot/openfreemap-styles, a fork of OpenMapTiles'
+  OSM Bright). Their license texts ship inside each image: see
+  /usr/share/doc/getmapstack/THIRD_PARTY_LICENSES and
   /usr/share/doc/valhalla-deps/.

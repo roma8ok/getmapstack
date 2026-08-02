@@ -1,0 +1,9 @@
+pmtiles:
+  sources:
+    basemap: /data/tiles.pmtiles
+fonts:
+  - /data/fonts
+styles:
+  paths:
+    - /tmp/martin/styles
+  rendering: true

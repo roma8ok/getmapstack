@@ -10,17 +10,23 @@
 
 Replace Google Maps API - no API keys, no rate limits, no vendor lock-in.
 
-Routing via [Valhalla](https://valhalla.github.io/valhalla/) 3.8.3, geocoding via [Photon](https://github.com/komoot/photon) 1.2.1.
+Routing via [Valhalla](https://valhalla.github.io/valhalla/) 3.8.3, geocoding via
+[Photon](https://github.com/komoot/photon) 1.2.1, vector basemap tiles via
+[Martin 1.13.0](https://github.com/maplibre/martin) (built with
+[Planetiler 0.10.2](https://github.com/onthegomap/planetiler)).
 
 <img src="https://raw.githubusercontent.com/roma8ok/getmapstack/main/assets/how-it-works.svg" width="880" alt="One docker run command starts a container with Valhalla routing on port 8002 and Photon geocoding on port 2322, backed by OSM data baked into the image; your application talks to both.">
 
 ## Quick start
 
 ```bash
-docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/cyprus
+docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/cyprus
 ```
 
 Images are multi-arch: linux/amd64 and linux/arm64 (Apple Silicon, AWS Graviton).
+
+Once it starts, the map catalog UI is at `http://localhost:3000/` - browse the vector
+tileset, style, fonts and sprites straight from a browser.
 
 Give it a moment to start - Photon opens its search index in a few seconds for a country
 this size, several minutes for the largest ones. Then check that it answers, a car route
@@ -39,7 +45,7 @@ Every other method is in [What you get](#what-you-get).
 
 ## Hosted API
 
-Try the stack without installing - the same services for all supported countries at `https://api.getmapstack.com` (`/valhalla` and `/photon` prefixes):
+Try the stack without installing - the same services for all supported countries at `https://api.getmapstack.com` (`/valhalla`, `/photon` and `/martin` prefixes):
 
 ```bash
 curl https://api.getmapstack.com/valhalla/route \
@@ -50,25 +56,33 @@ curl https://api.getmapstack.com/valhalla/route \
 curl "https://api.getmapstack.com/photon/api?q=Nicosia&limit=1"
 ```
 
+```bash
+curl "https://api.getmapstack.com/martin/basemap"
+```
+
+```bash
+curl "https://api.getmapstack.com/martin/style/bright/static/33.3823,35.1856,13/600x400.png" -o map.png
+```
+
 Please keep your usage fair. No SLA - this is a demo that may change or disappear; run your own container for unlimited use.
 
 ## Countries
 
 | | Country | Size | Run |
 |---|---------|------|-----|
-| 🇧🇪 | Belgium | 1.9 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/belgium` |
-| 🇧🇳 | Brunei | 0.5 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/brunei` |
-| 🇨🇾 | Cyprus | 0.3 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/cyprus` |
-| 🇮🇩 | Indonesia | 1.5 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/indonesia` |
-| 🇰🇿 | Kazakhstan | 1.0 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/kazakhstan` |
-| 🇲🇾 | Malaysia | 0.8 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/malaysia` |
-| 🇸🇬 | Singapore | 0.6 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/singapore` |
-| 🇰🇷 | South Korea | 1.5 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/south-korea` |
-| 🇻🇳 | Vietnam | 0.9 GB | `docker run -p 8002:8002 -p 2322:2322 ghcr.io/roma8ok/getmapstack/vietnam` |
+| 🇧🇪 | Belgium | 1.9 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/belgium` |
+| 🇧🇳 | Brunei | 0.5 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/brunei` |
+| 🇨🇾 | Cyprus | 0.3 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/cyprus` |
+| 🇮🇩 | Indonesia | 1.5 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/indonesia` |
+| 🇰🇿 | Kazakhstan | 1.0 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/kazakhstan` |
+| 🇲🇾 | Malaysia | 0.8 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/malaysia` |
+| 🇸🇬 | Singapore | 0.6 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/singapore` |
+| 🇰🇷 | South Korea | 1.5 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/south-korea` |
+| 🇻🇳 | Vietnam | 0.9 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/vietnam` |
 
 ## What you get
 
-Both engines serve their full API, not a trimmed subset - see [Not included](#not-included)
+All three engines serve their full API, not a trimmed subset - see [Not included](#not-included)
 for the handful of features these images don't have the data to answer. Everything below
 runs against a plain `docker run` of a country image, with no configuration.
 
@@ -88,14 +102,21 @@ runs against a plain `docker run` of a country image, with no configuration.
 | Coordinates from a place name, search and autocomplete | [`GET /api?q=`](#search) | `/photon` (:2322) |
 | Coordinates from address fields | [`GET /structured`](#structured-search) | `/photon` (:2322) |
 | Address from coordinates | [`GET /reverse`](#reverse-geocoding) | `/photon` (:2322) |
-| Versions and how old the data is | [`GET /status`](#data-freshness) | both |
+| Vector basemap tiles for any map library | [`GET /basemap/{z}/{x}/{y}`](#vector-tiles) | `/martin` (:3000) |
+| Map style, fonts, icons | [`GET /style/bright`, `/font/...`, `/sprite/...`](#fonts-and-icons) | `/martin` (:3000) |
+| Static map images, no JS | [`GET/POST /style/bright/static/...`](#static-images) | `/martin` (:3000) |
+| Rendered raster tiles | [`GET /style/bright/{z}/{x}/{y}.png`](#rendered-raster-tiles) | `/martin` (:3000) |
+| Live PostGIS overlay | [`MARTIN_POSTGRES` env](#live-postgis-overlay) | `/martin` (:3000) |
+| Versions and how old the data is | [`GET /status`](#data-freshness) | `/valhalla`, `/photon` |
+| Liveness check for the map service | [`GET /health`](#data-freshness) | `/martin` (:3000) |
 
 Self-hosted, call the port directly: `localhost:8002/route`. On the hosted API the same
 paths sit behind a prefix: `https://api.getmapstack.com/valhalla/route`.
 
-Parameter-level reference for both engines:
+Parameter-level reference for all three:
 [Valhalla API](https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/) ·
-[Photon API](https://github.com/komoot/photon/blob/master/docs/api-v1.md)
+[Photon API](https://github.com/komoot/photon/blob/master/docs/api-v1.md) ·
+[Martin docs](https://maplibre.org/martin/)
 
 ### Routing
 
@@ -374,7 +395,8 @@ sources: {
 ```
 
 Style the `edges` source-layer to see the network. Low zoom levels carry only the bigger
-road classes; the endpoint is marked beta upstream.
+road classes; the endpoint is marked beta upstream. For a real basemap with buildings,
+land use, water and labels, see [Map](#map).
 
 ### Geocoding
 
@@ -485,9 +507,119 @@ curl "localhost:2322/reverse?lat=35.1853&lon=33.3825&radius=5&limit=3&layer=stre
 Buildings come back without a `name` - they carry `housenumber` and `street` instead, so
 check the number of features rather than the presence of a name.
 
+### Map
+
+Martin serves a full vector basemap built by Planetiler from the same OSM snapshot as
+routing and geocoding - tiles, fonts, icons, a ready-to-use style, static map images and
+rendered raster tiles, all on port 3000. Any map rendered from these tiles must show
+visible credit: `(c) OpenMapTiles (c) OpenStreetMap contributors`. The tileset carries that
+string in its TileJSON, so a MapLibre map built on the shipped style displays it on its own.
+Static images and rendered raster tiles come back as bare pixels - whatever page or
+document they land in has to carry the credit.
+
+The shipped style is [OpenFreeMap Bright](https://github.com/hyperknot/openfreemap-styles),
+a maintained fork of OSM Bright, vendored here with five edits and the icons that come with
+it; `make update-bright-style` diffs the vendored copy against upstream. The tiles follow
+the OpenMapTiles schema, so any style written for that schema works instead - point a client
+at your own and serve it from wherever you like.
+
+#### Vector tiles
+
+TileJSON describes the tileset; `/basemap/{z}/{x}/{y}` serves the tiles themselves:
+
+```bash
+curl localhost:3000/basemap
+```
+
+```json
+{"tiles":["http://localhost:3000/basemap/{z}/{x}/{y}"],"name":"OpenMapTiles","attribution":"<a href=\"https://www.openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">&copy; OpenStreetMap contributors</a>","bounds":[31.95244,34.2337399,34.96147,36.00323],"minzoom":0,"maxzoom":14}
+```
+
+Point MapLibre GL JS at the ready-made style instead of wiring up sources by hand:
+
+```js
+import maplibregl from "maplibre-gl";
+
+new maplibregl.Map({
+  container: "map",
+  style: "http://localhost:3000/style/bright",
+  center: [33.3823, 35.1856],
+  zoom: 12
+});
+```
+
+#### Fonts and icons
+
+`/font/{fontstack}/{range}` cuts glyph PBFs on the fly for whatever text a style's layers
+need - `curl "localhost:3000/font/Noto%20Sans%20Regular/0-255"` (URL-encode the space in
+the fontstack name). `/sprite/bright.png` and
+`/sprite/bright.json` (plus `@2x` and an `sdf_sprite/` variant for tintable icons) serve
+the icon images the style's point layers reference.
+
+#### Static images
+
+Render a PNG or JPEG server-side, no browser or JavaScript involved - point, zoom and
+size go in the path:
+
+```bash
+curl "localhost:3000/style/bright/static/33.3823,35.1856,13/600x400.png" -o map.png
+```
+
+POST a GeoJSON `FeatureCollection` to draw markers, lines or polygons on top of the same
+view:
+
+```bash
+curl -X POST "localhost:3000/style/bright/static/33.3823,35.1856,13/600x400.png" \
+  -H "Content-Type: application/json" \
+  -d '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[33.3823,35.1856]},"properties":{"circle-radius":8,"circle-color":"#e11"}}]}' \
+  -o map-overlay.png
+```
+
+Both come back as a 600x400 PNG - the second one with a red dot over Nicosia.
+
+#### Rendered raster tiles
+
+The same style pre-rendered into ordinary `{z}/{x}/{y}.png` raster tiles, for clients
+that don't speak vector tiles:
+
+```bash
+curl "localhost:3000/style/bright/12/2427/1619.png" -o tile.png
+```
+
+#### Serving to another host
+
+The style's tile/glyph/sprite URLs default to `http://localhost:3000` - fine inside a
+single container, wrong once a browser on another machine needs to fetch them. Set
+`PUBLIC_URL` and the entrypoint templates it into the style at startup:
+
+```bash
+docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 \
+  -e PUBLIC_URL=https://maps.example.com \
+  ghcr.io/roma8ok/getmapstack/cyprus
+```
+
+Static images and rendered raster tiles are fetched by Martin from inside the container,
+so if `PUBLIC_URL` is not reachable from there, render through the second style
+(`/style/bright-local/static/...`, `/style/bright-local/{z}/{x}/{y}.png`) instead of
+`/style/bright/...` - it always points at `localhost:3000` no matter what `PUBLIC_URL` is
+set to. `bright` is the one to hand to browsers.
+
+#### Live PostGIS overlay
+
+Set `MARTIN_POSTGRES` to a Postgres connection string and Martin adds every table with a
+geometry column as an extra tile source at `/{table}/{z}/{x}/{y}`, auto-discovered, no
+config file to edit:
+
+```yaml
+environment:
+  MARTIN_POSTGRES: postgres://user:password@host:5432/dbname
+```
+
+Leave it unset and the map stays fully static - no database, no extra moving part.
+
 ### Data freshness
 
-Each engine reports its version and when its data was built:
+The routing and geocoding engines report their version and when their data was built:
 
 ```bash
 curl localhost:8002/status
@@ -507,7 +639,12 @@ curl localhost:2322/status
 
 Both timestamps are build times, not the OpenStreetMap snapshot date. Every published
 image also carries a date tag matching the OSM extract it was built from, next to
-`latest`.
+`latest`. The vector tileset carries the same snapshot: all three services build from one
+pinned OSM download.
+
+The map service answers `curl localhost:3000/health` with `OK` - a liveness check, no
+version or build date. The tileset's own metadata sits in its
+[TileJSON](#vector-tiles) instead.
 
 ### Not included
 
@@ -521,8 +658,6 @@ image also carries a date tag matching the OSM extract it was built from, next t
   `/transit_available` always answers `false`.
 - **Full geometries.** The geocoding index stores points only: `geometry=1` answers
   HTTP 400. Area features still carry an `extent` bounding box where OSM has one.
-- **Basemap tiles.** [`/tile`](#road-network-tiles) draws the road network, but there is
-  no general-purpose basemap - no buildings, land use, water or place labels.
 - **One country per image.** A route that leaves the country in the image has no data to
   follow - run the image for the country you need, or run several.
 
@@ -535,16 +670,21 @@ git clone https://github.com/roma8ok/getmapstack.git
 cd getmapstack
 make build-valhalla-builder
 make build-photon-builder
+make build-planetiler-builder
+make fetch-osm COUNTRY=cyprus
 make create-valhalla-tiles COUNTRY=cyprus
 make create-photon-data COUNTRY=cyprus
+make create-vector-tiles COUNTRY=cyprus
 make build-server COUNTRY=cyprus
-docker run -p 8002:8002 -p 2322:2322 getmapstack/cyprus
+docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 getmapstack/cyprus
 ```
 
-Intermediate artifacts (routing tiles, geocoding index) land in `artifacts/`. Images build for linux/amd64 and linux/arm64 by default - pass `PLATFORMS=linux/arm64` (or your platform) for a faster single-arch build. `make help` lists all targets and available countries.
+`fetch-osm` pins one OSM snapshot so all three builders work from the same download. Intermediate artifacts (routing tiles, geocoding index, vector tiles) land in `artifacts/`. Images build for linux/amd64 and linux/arm64 by default - pass `PLATFORMS=linux/arm64` (or your platform) for a faster single-arch build. `make help` lists all targets and available countries.
 
 ## License
 
 Code: [MIT](LICENSE). Map data: © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/), sourced from [Geofabrik](https://download.geofabrik.de/) extracts.
 
-The images embed OSM-derived databases (routing tiles, geocoding index) redistributed under ODbL 1.0 - see [NOTICE](NOTICE) for full attribution. If you publicly use routing or geocoding results from these images, credit OpenStreetMap: "© OpenStreetMap contributors" linked to [openstreetmap.org/copyright](https://www.openstreetmap.org/copyright).
+The images embed OSM-derived databases (routing tiles, geocoding index, vector tiles) redistributed under ODbL 1.0 - see [NOTICE](NOTICE) for full attribution. If you publicly use routing or geocoding results from these images, credit OpenStreetMap: "© OpenStreetMap contributors" linked to [openstreetmap.org/copyright](https://www.openstreetmap.org/copyright).
+
+The basemap adds third-party design work: the tiles follow the [OpenMapTiles](https://openmaptiles.org/) schema (CC-BY 4.0), the style is [OpenFreeMap Bright](https://github.com/hyperknot/openfreemap-styles) - a fork of OpenMapTiles' OSM Bright, style code BSD-3-Clause, style design CC-BY 4.0, the fork's own changes MIT - with [Maki](https://github.com/mapbox/maki) icons under CC0 1.0 and [Noto](https://github.com/notofonts) fonts under OFL 1.1. Full license texts ship inside every image at `/usr/share/doc/getmapstack/THIRD_PARTY_LICENSES`.

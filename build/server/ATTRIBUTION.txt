@@ -16,3 +16,12 @@ If you publicly use routing or geocoding results from this image (for
 example in an application or on a map), you must credit OpenStreetMap:
 "(c) OpenStreetMap contributors" with a link to
 https://www.openstreetmap.org/copyright
+
+Vector basemap tiles
+
+  Tile data (c) OpenStreetMap contributors (ODbL 1.0), with coastline water polygons
+  from osmdata.openstreetmap.de (ODbL 1.0) and low-zoom context from Natural Earth
+  (public domain): https://www.naturalearthdata.com/
+  Tile schema: OpenMapTiles (CC-BY 4.0): https://openmaptiles.org/
+  Maps rendered from these tiles must show visible credit:
+  (c) OpenMapTiles (c) OpenStreetMap contributors

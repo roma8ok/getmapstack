@@ -1,21 +1,62 @@
 #!/bin/bash
 set -euo pipefail
 
+# Martin serves the style to browsers, which need absolute URLs on a host THEY can reach
+# (PUBLIC_URL), while Martin's own static-image renderer fetches the style's source URLs
+# over real HTTP from inside the container, where only localhost is guaranteed to
+# resolve. One template, two rendered styles: bright (clients) and bright-local (the
+# renderer; the hosted proxy rewrites render paths to it).
+PIDS=()
+
+# Kills whatever is already running. Safe to call twice and safe to call before any
+# process has started.
+shutdown() {
+  [[ ${#PIDS[@]} -gt 0 ]] || return 0
+  kill "${PIDS[@]}" 2>/dev/null
+  wait "${PIDS[@]}" 2>/dev/null
+}
+
+# Registered BEFORE the first background launch on purpose: a SIGTERM arriving between
+# two launches would otherwise find no handler, and every process started so far would
+# outlive the container.
+trap shutdown SIGTERM SIGINT
+
+PUBLIC_URL="${PUBLIC_URL:-http://localhost:3000}"
+mkdir -p /tmp/martin/styles
+# Not shell-escaped: a PUBLIC_URL containing &, | or \ would silently corrupt the
+# rendered style JSON, since those are all sed replacement-text metacharacters.
+sed "s|__PUBLIC_URL__|${PUBLIC_URL}|g" /data/styles/bright.json.tmpl > /tmp/martin/styles/bright.json
+sed "s|__PUBLIC_URL__|http://localhost:3000|g" /data/styles/bright.json.tmpl > /tmp/martin/styles/bright-local.json
+
 valhalla_service /data/valhalla.json &
-VALHALLA_PID=$!
+PIDS+=($!)
 
 java -jar /opt/photon.jar serve \
   -listen-ip 0.0.0.0 -listen-port 2322 \
   -data-dir /data/photon -cors-any &
-PHOTON_PID=$!
+PIDS+=($!)
 
-trap 'kill $VALHALLA_PID $PHOTON_PID; wait $VALHALLA_PID $PHOTON_PID' SIGTERM SIGINT
+# MARTIN_POSTGRES optionally plugs a live PostGIS database in as an extra tile source
+# (tables with geometry are auto-discovered and served as /{table}/{z}/{x}/{y}). Martin
+# refuses a config file combined with a positional connection string, so the connection
+# is appended to a writable copy of the config instead. Sprites and the web UI ride on
+# CLI flags because the config file schema for them is less stable than the flags.
+MARTIN_CONFIG=/data/martin.yaml
+if [[ -n "${MARTIN_POSTGRES:-}" ]]; then
+  MARTIN_CONFIG=/tmp/martin/martin.yaml
+  cp /data/martin.yaml "$MARTIN_CONFIG"
+  printf 'postgres:\n  connection_string: "%s"\n' "${MARTIN_POSTGRES}" >> "$MARTIN_CONFIG"
+fi
+
+martin --config "$MARTIN_CONFIG" \
+  --sprite /data/sprites/bright \
+  --webui enable-for-all &
+PIDS+=($!)
 
 set +e
-wait -n $VALHALLA_PID $PHOTON_PID
+wait -n "${PIDS[@]}"
 EXIT_CODE=$?
 
-kill $VALHALLA_PID $PHOTON_PID 2>/dev/null
-wait $VALHALLA_PID $PHOTON_PID 2>/dev/null
+shutdown
 
 exit $EXIT_CODE

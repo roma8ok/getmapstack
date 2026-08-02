@@ -50,3 +50,27 @@ prime_server (/usr/local/lib/valhalla-deps/libprime_server.so.0)
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Martin (vector tile / glyph / sprite / style server, /usr/local/bin/martin)
+  License: MIT OR Apache-2.0 (dual-licensed; recipient's choice)
+  Full text: not bundled in this image; see the source repository
+  Source: https://github.com/maplibre/martin
+
+Noto Sans fonts (/data/fonts/)
+  License: SIL Open Font License 1.1
+  Full text: https://openfontlicense.org
+  "Noto" is a Reserved Font Name under the OFL: modified versions must not be
+  distributed under the Noto name without permission from the copyright holder.
+  Source: https://github.com/notofonts/latin-greek-cyrillic,
+  https://github.com/notofonts/noto-cjk
+
+OpenFreeMap Bright style and icons (/data/styles/, /data/sprites/bright/)
+  License: style code BSD 3-Clause; style design CC-BY 4.0; the fork's own
+  modifications MIT; Maki icon set CC0 1.0
+  Full text: not bundled in this image; see the source repositories
+  The style is a fork of OSM Bright (KlokanTech.com and OpenMapTiles contributors,
+  Mapbox), which requires visible "OpenMapTiles" credit on maps built from it - the
+  tileset served by this image carries that attribution.
+  Source: https://github.com/hyperknot/openfreemap-styles,
+  https://github.com/openmaptiles/osm-bright-gl-style,
+  https://github.com/mapbox/maki
