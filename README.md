@@ -70,15 +70,15 @@ Please keep your usage fair. No SLA - this is a demo that may change or disappea
 
 | | Country | Size | Run |
 |---|---------|------|-----|
-| 🇧🇪 | Belgium | 1.9 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/belgium` |
-| 🇧🇳 | Brunei | 0.5 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/brunei` |
-| 🇨🇾 | Cyprus | 0.3 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/cyprus` |
-| 🇮🇩 | Indonesia | 1.5 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/indonesia` |
-| 🇰🇿 | Kazakhstan | 1.0 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/kazakhstan` |
-| 🇲🇾 | Malaysia | 0.8 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/malaysia` |
-| 🇸🇬 | Singapore | 0.6 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/singapore` |
-| 🇰🇷 | South Korea | 1.5 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/south-korea` |
-| 🇻🇳 | Vietnam | 0.9 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/vietnam` |
+| 🇧🇪 | Belgium | 2.3 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/belgium` |
+| 🇧🇳 | Brunei | 0.8 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/brunei` |
+| 🇨🇾 | Cyprus | 0.4 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/cyprus` |
+| 🇮🇩 | Indonesia | 2.7 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/indonesia` |
+| 🇰🇿 | Kazakhstan | 1.4 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/kazakhstan` |
+| 🇲🇾 | Malaysia | 1.1 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/malaysia` |
+| 🇸🇬 | Singapore | 0.9 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/singapore` |
+| 🇰🇷 | South Korea | 1.9 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/south-korea` |
+| 🇻🇳 | Vietnam | 1.2 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/vietnam` |
 
 ## What you get
 
