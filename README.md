@@ -15,7 +15,7 @@ Routing via [Valhalla](https://valhalla.github.io/valhalla/) 3.8.3, geocoding vi
 [Martin 1.13.0](https://github.com/maplibre/martin) (built with
 [Planetiler 0.10.2](https://github.com/onthegomap/planetiler)).
 
-<img src="https://raw.githubusercontent.com/roma8ok/getmapstack/main/assets/how-it-works.svg" width="880" alt="One docker run command starts a container with Valhalla routing on port 8002 and Photon geocoding on port 2322, backed by OSM data baked into the image; your application talks to both.">
+<img src="https://raw.githubusercontent.com/roma8ok/getmapstack/main/assets/how-it-works.svg" width="880" alt="One docker run command starts a container with Valhalla routing on port 8002, Photon geocoding on port 2322 and Martin vector tiles on port 3000, backed by OSM data baked into the image; your application talks to all three.">
 
 ## Quick start
 
