@@ -19,9 +19,11 @@ case "$COUNTRY" in
   belgium) CC="be" ;;
   brunei) CC="bn" ;;
   cyprus) CC="cy" ;;
+  georgia) CC="ge" ;;
   indonesia) CC="id" ;;
   kazakhstan) CC="kz" ;;
   malaysia) CC="my" ;;
+  serbia) CC="rs" ;;
   singapore) CC="sg" ;;
   south-korea) CC="kr" ;;
   vietnam) CC="vn" ;;

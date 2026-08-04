@@ -62,7 +62,8 @@ Noto Sans fonts (/data/fonts/)
   "Noto" is a Reserved Font Name under the OFL: modified versions must not be
   distributed under the Noto name without permission from the copyright holder.
   Source: https://github.com/notofonts/latin-greek-cyrillic,
-  https://github.com/notofonts/noto-cjk
+  https://github.com/notofonts/noto-cjk,
+  https://github.com/notofonts/georgian
 
 OpenFreeMap Bright style and icons (/data/styles/, /data/sprites/bright/)
   License: style code BSD 3-Clause; style design CC-BY 4.0; the fork's own

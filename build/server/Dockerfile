@@ -61,6 +61,8 @@ ADD --checksum=sha256:0c34df072a3fa7efbb7cbf34950e1f971a4447cffe365d3a359e2d4089
     https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.015/NotoSans-v2.015.zip /tmp/notosans.zip
 ADD --checksum=sha256:69975a0ac8472717870aefeab0a4d52739308d90856b9955313b2ad5e0148d68 \
     https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/SubsetOTF/KR/NotoSansKR-Regular.otf /out/fonts/NotoSansKR-Regular.otf
+ADD --checksum=sha256:10e85011008108308e6feab0408242acb07804da61ede3d3ff236461ae07ab1b \
+    https://github.com/notofonts/georgian/releases/download/NotoSansGeorgian-v2.005/NotoSansGeorgian-v2.005.zip /tmp/notosansgeorgian.zip
 ADD --checksum=sha256:b4bc74bed10eddeb4f4d7137e19d8c8e7894ccdb00e0ee18d0c450a713c4adcf \
     https://codeload.github.com/hyperknot/openfreemap-styles/tar.gz/72e1480dfc92858d334647037988bd2591fdb021 /tmp/bright.tar.gz
 RUN apt-get update && apt-get install -y --no-install-recommends unzip \
@@ -70,6 +72,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends unzip \
        'NotoSans/hinted/ttf/NotoSans-Regular.ttf' \
        'NotoSans/hinted/ttf/NotoSans-Bold.ttf' \
        'NotoSans/hinted/ttf/NotoSans-Italic.ttf' -d /out/fonts \
+  && unzip -j /tmp/notosansgeorgian.zip \
+       'NotoSansGeorgian/hinted/ttf/NotoSansGeorgian-Regular.ttf' -d /out/fonts \
   && tar -xzf /tmp/bright.tar.gz -C /tmp \
   # airport_11.svg exists in both icon sets and the two files differ, so the style's own
   # copy has to land last - the order the style's upstream sprite build uses.

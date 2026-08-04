@@ -7,9 +7,11 @@
 region.belgium = europe
 region.brunei = asia
 region.cyprus = europe
+region.georgia = europe
 region.indonesia = asia
 region.kazakhstan = asia
 region.malaysia = asia
+region.serbia = europe
 region.singapore = asia
 region.south-korea = asia
 region.vietnam = asia
