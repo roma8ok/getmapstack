@@ -100,8 +100,9 @@ endif
 	jq '.mjolnir.tile_extract = "/data/valhalla.tar" | .mjolnir.tile_dir = "/data"' artifacts/valhalla-$(COUNTRY).json > build/server/valhalla.json
 	cp artifacts/photon-$(COUNTRY).tar build/server/photon-data.tar
 	cp artifacts/tiles-$(COUNTRY).pmtiles build/server/tiles.pmtiles
+	jq -n --args '{countries: $$ARGS.positional}' "$(COUNTRY)" > build/server/explorer-countries.json
 	docker build --platform $(PLATFORMS) -t getmapstack/$(COUNTRY) ./build/server
-	rm build/server/valhalla.tar build/server/valhalla.json build/server/photon-data.tar build/server/tiles.pmtiles
+	rm build/server/valhalla.tar build/server/valhalla.json build/server/photon-data.tar build/server/tiles.pmtiles build/server/explorer-countries.json
 	@echo "=== Built getmapstack/$(COUNTRY) ==="
 
 # Diff the vendored map style template against upstream, patched the same way. BRIGHT_REF

@@ -11,6 +11,7 @@ PIDS=()
 # Kills whatever is already running. Safe to call twice and safe to call before any
 # process has started.
 shutdown() {
+  [[ -n "${EXPLORER_PID:-}" ]] && kill "$EXPLORER_PID" 2>/dev/null
   [[ ${#PIDS[@]} -gt 0 ]] || return 0
   kill "${PIDS[@]}" 2>/dev/null
   wait "${PIDS[@]}" 2>/dev/null
@@ -52,6 +53,13 @@ martin --config "$MARTIN_CONFIG" \
   --sprite /data/sprites/bright \
   --webui enable-for-all &
 PIDS+=($!)
+
+# The explorer is the only process here that is not the product. Its PID is kept out
+# of PIDS on purpose: `wait -n` below ends the container when any process in PIDS
+# dies, and a dead static file server must not take routing, geocoding and tiles with
+# it. shutdown() still needs it, so it is tracked separately.
+explorer-server &
+EXPLORER_PID=$!
 
 set +e
 wait -n "${PIDS[@]}"

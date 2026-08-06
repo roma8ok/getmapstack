@@ -1,0 +1,147 @@
+:root {
+  color-scheme: light dark;
+  --fg: #14181d; --bg: #ffffff; --muted: #5a6572; --line: #e3e8ee; --code: #f4f6f9;
+  --panel: #fbfcfd; --accent: #1f6feb; --ok: #1a7f37;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --fg: #e6eaf0; --bg: #12161b; --muted: #9aa6b4; --line: #262d36;
+          --code: #1a2026; --panel: #151a21; --accent: #58a6ff; --ok: #3fb950; }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); overflow: hidden;
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+.app { display: grid; height: 100vh; grid-template-columns: 356px 1fr;
+  grid-template-rows: 52px auto 1fr; }
+header { grid-column: 1 / -1; display: flex; align-items: center; gap: 18px;
+  padding: 0 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+nav { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px;
+  padding: 7px 14px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.panel { grid-column: 1; grid-row: 3; display: flex; flex-direction: column;
+  min-height: 0; border-right: 1px solid var(--line); background: var(--panel); }
+.panel-scroll { overflow-y: auto; padding: 12px 0 14px; }
+.map { grid-column: 2; grid-row: 3; position: relative; }
+.run { flex: none; margin-top: auto; padding: 10px 12px 11px;
+  border-top: 1px solid var(--line); background: color-mix(in oklab, var(--accent) 5%, var(--panel)); }
+.foot { border-top: 1px solid var(--line); padding: 9px 14px; font-size: 11.5px; color: var(--muted); }
+.brand { font-weight: 650; white-space: nowrap; }
+.brand span { color: var(--muted); font-weight: 400; }
+.meta { margin-left: auto; display: flex; gap: 14px; font-size: 12px; color: var(--muted); }
+select, .field input { font: inherit; font-size: 12.5px; color: var(--fg); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; }
+.group-label { font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--muted); margin: 0 6px 0 10px; }
+.group-label:first-child { margin-left: 0; }
+.tool { padding: 4px 9px; border-radius: 6px; cursor: pointer; font-size: 13px;
+  white-space: nowrap; border: 1px solid transparent; }
+.tool:hover { background: rgba(127,127,127,.09); }
+.tool.on { background: rgba(31,111,235,.10); font-weight: 600;
+  border-color: color-mix(in oklab, var(--accent) 45%, var(--line)); }
+.card { margin: 0 12px 12px; border: 1px solid var(--line); border-radius: 9px;
+  background: var(--bg); overflow: hidden; }
+.card-head { display: flex; align-items: center; gap: 8px; padding: 8px 11px;
+  border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.card-head b { color: var(--fg); font-size: 13px; }
+.card-body { padding: 11px; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.seg button { flex: 1; font: inherit; font-size: 12.5px; padding: 5px 0; border: 0;
+  cursor: pointer; background: transparent; color: var(--muted); border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: 0; }
+.seg button.on { background: var(--accent); color: #fff; font-weight: 600; }
+.field { display: flex; align-items: center; gap: 8px; margin-top: 9px;
+  font-size: 12.5px; color: var(--muted); }
+.field input { flex: 1; }
+.pt { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 12.5px; }
+/* The two "remove this row" crosses: one per point, one per contour. */
+.pt-del, .ct-del { margin-left: auto; font: inherit; font-size: 13px; line-height: 1;
+  padding: 2px 6px; border: 1px solid transparent; border-radius: 6px;
+  background: transparent; color: var(--muted); cursor: pointer; }
+.pt-del:hover, .ct-del:hover:not(:disabled) { border-color: var(--line); color: var(--fg); }
+.pin { width: 19px; height: 19px; border-radius: 50%; display: grid; place-items: center;
+  color: #fff; font-size: 11px; font-weight: 700; background: var(--accent); flex: none; }
+.co { color: var(--muted); }
+.hintline { font-size: 12px; color: var(--muted); margin-top: 8px; }
+.nums { display: flex; gap: 20px; align-items: baseline; }
+.num { font-size: 21px; font-weight: 640; letter-spacing: -0.02em; }
+.num small { font-size: 12px; font-weight: 400; color: var(--muted); margin-left: 3px; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge { font-size: 11.5px; padding: 2px 7px; border-radius: 999px;
+  border: 1px solid var(--line); color: var(--muted); }
+.steps { margin: 0; padding: 0; list-style: none; font-size: 12.5px; }
+.steps li { display: flex; gap: 8px; padding: 3px 0; }
+.steps li i { color: var(--muted); font-style: normal; min-width: 15px; }
+.curlhead { display: flex; align-items: center; gap: 8px; padding: 6px 11px;
+  border-top: 1px solid var(--line); background: var(--code); font-size: 11px;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+/* Every small bordered button on the page: the two copy buttons, the raw-JSON copy and
+   the contour row's "auto". One box, differing only in size and placement. */
+.curlhead button, .run-head button, .rawbox summary button, .ct-auto { font: inherit;
+  font-size: 11px; text-transform: none; letter-spacing: 0; padding: 1px 8px;
+  border: 1px solid var(--line); border-radius: 6px; background: var(--bg);
+  color: var(--muted); cursor: pointer; }
+.curlhead button, .run-head button, .ct-auto { margin-left: auto; }
+.curl { background: var(--code); padding: 0 11px 10px; overflow-x: auto;
+  white-space: pre; font-size: 11.5px; line-height: 1.55; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.disc { display: flex; align-items: center; gap: 6px; padding: 8px 11px;
+  font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); }
+summary.disc { cursor: pointer; list-style: none; }
+summary.disc::-webkit-details-marker { display: none; }
+.rawsize { margin-left: auto; }
+/* Capped on purpose: a large response would otherwise push the whole panel into a
+   scroll of its own, and the point of the block is to glance at the shape. */
+.rawbody { max-height: 320px; overflow: auto; padding: 10px 11px; }
+.err { display: flex; align-items: baseline; gap: 9px; }
+.err .code { font-size: 21px; font-weight: 640; color: #bf4040; }
+.errnote { font-size: 12.5px; color: var(--muted); margin-top: 9px; }
+.run.hot { background: color-mix(in oklab, var(--accent) 13%, var(--panel));
+  border-top-color: var(--accent); }
+.run-head { display: flex; align-items: baseline; gap: 8px; }
+.run-head b { font-size: 13px; white-space: nowrap; }
+.run-why { font-size: 11.5px; color: var(--muted); margin: 1px 0 7px; }
+.run pre { margin: 0; background: var(--code); border: 1px solid var(--line);
+  border-radius: 7px; padding: 8px 10px; overflow-x: auto; font-size: 11.5px; }
+.run .after { font-size: 11.5px; color: var(--muted); margin-top: 7px; }
+/* Centred by grid, not by line-height: box-sizing: border-box and the 2px ring leave an
+   18px content box, so a 22px line-height puts the letter 1.68px low. */
+.marker { width: 22px; height: 22px; border-radius: 50%; background: var(--accent);
+  color: #fff; font: 700 12px -apple-system, sans-serif; display: grid;
+  place-items: center; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.4);
+  cursor: grab; }
+.mock-button { font: inherit; font-size: 12.5px; padding: 5px 10px; cursor: pointer;
+  border: 1px solid var(--line); border-radius: 7px; background: var(--bg); color: var(--fg); }
+.legend { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.sw { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.sw.raw { background: #bf4040; }
+.sw.snapped { background: #1f6feb; }
+.sw.alt { background: #8aa9c9; }
+.matrix { border-collapse: collapse; font-size: 12.5px; width: 100%; }
+.matrix th, .matrix td { border: 1px solid var(--line); padding: 3px 6px; text-align: right; }
+.shot { width: 100%; border: 1px solid var(--line); border-radius: 7px; display: block; }
+.adv { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; }
+.adv summary { font-size: 12px; color: var(--muted); cursor: pointer; }
+.adv-body { padding-top: 6px; }
+.adv-row { display: flex; align-items: center; gap: 8px; margin-top: 6px;
+  font-size: 12.5px; color: var(--muted); }
+.adv-row span { flex: none; }
+.adv-row input[type="number"], .adv-row select { margin-left: auto; width: 96px;
+  font: inherit; font-size: 12.5px; color: var(--fg); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; }
+.adv-row input[type="checkbox"] { accent-color: var(--accent); }
+.ct-head { margin-bottom: 2px; }
+.ct-head .mock-button { margin-left: auto; padding: 2px 8px; font-size: 12px; }
+.ct-row { display: flex; align-items: center; gap: 7px; margin-top: 5px;
+  font-size: 12.5px; color: var(--muted); position: relative; }
+.ct-sw { width: 15px; height: 15px; flex: none; border-radius: 4px; cursor: pointer;
+  border: 1px solid var(--line); padding: 0; }
+.ct-val { width: 64px; font: inherit; font-size: 12.5px; color: var(--fg);
+  background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+  padding: 3px 7px; }
+.ct-unit { flex: none; }
+.ct-auto { font-size: 11.5px; padding: 1px 7px; }
+.ct-auto + .ct-del { margin-left: 0; }
+.ct-del:disabled { opacity: .35; cursor: default; }
+/* The real colour input, invisible: the swatch button is what the panel shows, and
+   clicking it opens this. */
+.ct-picker { position: absolute; left: 0; bottom: 0; width: 1px; height: 1px;
+  opacity: 0; pointer-events: none; border: 0; padding: 0; }

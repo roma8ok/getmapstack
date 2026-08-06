@@ -65,6 +65,19 @@ Noto Sans fonts (/data/fonts/)
   https://github.com/notofonts/noto-cjk,
   https://github.com/notofonts/georgian
 
+MapLibre GL JS 6.1.0 (map rendering library, /data/explorer/vendor/)
+  License: BSD 3-Clause
+  Copyright (c) 2020, MapLibre contributors
+  Copyright (c) 2020, Mapbox
+  Full text: not bundled in this image; see the source repository
+  Source: https://github.com/maplibre/maplibre-gl-js/blob/v6.1.0/LICENSE.txt
+
+Go standard library (statically linked into /usr/local/bin/explorer-server)
+  License: BSD 3-Clause
+  Copyright (c) 2009 The Go Authors. All rights reserved.
+  Full text: https://go.dev/LICENSE
+  Source: https://github.com/golang/go
+
 OpenFreeMap Bright style and icons (/data/styles/, /data/sprites/bright/)
   License: style code BSD 3-Clause; style design CC-BY 4.0; the fork's own
   modifications MIT; Maki icon set CC0 1.0

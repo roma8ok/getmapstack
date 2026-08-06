@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, follow">
+<title>Getmapstack explorer</title>
+<link rel="stylesheet" href="/vendor/maplibre-gl.css">
+<link rel="stylesheet" href="./app.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">Getmapstack <span>explorer</span></div>
+    <select id="country" hidden></select>
+    <div class="meta">
+      <span id="m-data"></span><span id="m-valhalla"></span><span id="m-photon"></span>
+    </div>
+  </header>
+  <nav id="tools"></nav>
+  <aside class="panel">
+    <div class="panel-scroll">
+      <div class="card" id="params"></div>
+      <div class="card" id="answer"></div>
+    </div>
+    <div class="run" id="run" hidden></div>
+    <div class="foot">
+      Map data &copy; OpenStreetMap contributors (ODbL) &middot;
+      <a href="https://openmaptiles.org/">OpenMapTiles</a> &middot;
+      <a href="https://github.com/hyperknot/openfreemap-styles">OpenFreeMap Bright</a>
+    </div>
+  </aside>
+  <div class="map" id="map"></div>
+</div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>

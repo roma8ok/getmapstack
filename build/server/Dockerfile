@@ -39,6 +39,18 @@ ADD --checksum=sha256:c91de2db460ef7bece33e6bc67dbdd6b05d161242025c69ece19f3efc8
 FROM martin-fetch-${TARGETARCH} AS martin-fetch
 RUN mkdir -p /out && tar -xzf /tmp/martin.tar.gz -C /out martin
 
+# The explorer's static file server. Built on the build host so the cross-compile is
+# never QEMU-emulated; the standard library is the only dependency.
+FROM --platform=$BUILDPLATFORM golang:1.26 AS explorer-build
+ARG TARGETARCH
+WORKDIR /src
+COPY explorer-server/ ./
+# Go ships no precompiled standard library, so without the cache mount every cold run of
+# this stage recompiles net/http and its dependencies from scratch - once per target
+# platform, and again after any edit under explorer-server/.
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -ldflags="-s -w" -o /out/explorer-server .
+
 # Runs natively on the build host ($BUILDPLATFORM) so the multi-GB tar
 # extraction is never QEMU-emulated. The complete /data content is assembled
 # here and lands in the final stage as ONE layer: the single COPY creates
@@ -65,6 +77,8 @@ ADD --checksum=sha256:10e85011008108308e6feab0408242acb07804da61ede3d3ff236461ae
     https://github.com/notofonts/georgian/releases/download/NotoSansGeorgian-v2.005/NotoSansGeorgian-v2.005.zip /tmp/notosansgeorgian.zip
 ADD --checksum=sha256:b4bc74bed10eddeb4f4d7137e19d8c8e7894ccdb00e0ee18d0c450a713c4adcf \
     https://codeload.github.com/hyperknot/openfreemap-styles/tar.gz/72e1480dfc92858d334647037988bd2591fdb021 /tmp/bright.tar.gz
+ADD --checksum=sha256:0fff84171fdaff48efe3a794a403af6d26598a27986e73e8603c15e37f008712 \
+    https://github.com/maplibre/maplibre-gl-js/releases/download/v6.1.0/dist.zip /tmp/maplibre.zip
 RUN apt-get update && apt-get install -y --no-install-recommends unzip \
   && rm -rf /var/lib/apt/lists/* \
   && mkdir -p /out/fonts /out/sprites/bright /out/styles \
@@ -80,10 +94,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends unzip \
   && SRC=/tmp/openfreemap-styles-72e1480dfc92858d334647037988bd2591fdb021 \
   && cp $SRC/styles/liberty/svgs/svgs_iconset/*.svg /out/sprites/bright/ \
   && cp $SRC/styles/liberty/svgs/svgs_not_in_iconset/*.svg /out/sprites/bright/ \
-  && cp $SRC/styles/bright/icons_unique/*.svg /out/sprites/bright/
+  && cp $SRC/styles/bright/icons_unique/*.svg /out/sprites/bright/ \
+  && mkdir -p /out/explorer/vendor \
+  && unzip -qj /tmp/maplibre.zip \
+       'dist/maplibre-gl.mjs' 'dist/maplibre-gl-shared.mjs' \
+       'dist/maplibre-gl-worker.mjs' 'dist/maplibre-gl.css' -d /out/explorer/vendor \
+  && mv /out/explorer/vendor/maplibre-gl.mjs /out/explorer/vendor/maplibre-gl.js
 COPY tiles.pmtiles /out/tiles.pmtiles
 COPY martin.yaml /out/martin.yaml
 COPY assets/bright.json.tmpl /out/styles/bright.json.tmpl
+COPY explorer/ /out/explorer/
+COPY explorer-countries.json /out/explorer/countries.json
 
 FROM ubuntu:24.04
 
@@ -106,6 +127,7 @@ RUN echo "/usr/local/lib/valhalla-deps" > /etc/ld.so.conf.d/00-valhalla.conf && 
 RUN ! ldd /usr/local/bin/valhalla_service | grep -q 'not found'
 
 COPY --from=martin-fetch /out/martin /usr/local/bin/martin
+COPY --from=explorer-build /out/explorer-server /usr/local/bin/explorer-server
 
 ADD --checksum=sha256:6ea66d598a3f6fc1b59b0f81ad4f8abee72ccdb9d3db03bc12008974cdebd58d --chmod=644 \
     https://github.com/komoot/photon/releases/download/1.2.1/photon-1.2.1.jar /opt/photon.jar
@@ -128,7 +150,7 @@ USER getmapstack
 LABEL org.opencontainers.image.source="https://github.com/roma8ok/getmapstack" \
       org.opencontainers.image.licenses="MIT AND Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND ODbL-1.0 AND OFL-1.1 AND CC-BY-4.0 AND CC0-1.0 AND (MIT OR Apache-2.0)"
 
-EXPOSE 8002 2322 3000
+EXPOSE 8002 2322 3000 8080
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5m \
   CMD curl -sf http://localhost:8002/status && curl -sf http://localhost:2322/status && curl -sf http://localhost:3000/health || exit 1

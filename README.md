@@ -28,6 +28,11 @@ Images are multi-arch: linux/amd64 and linux/arm64 (Apple Silicon, AWS Graviton)
 Once it starts, the map catalog UI is at `http://localhost:3000/` - browse the vector
 tileset, style, fonts and sprites straight from a browser.
 
+The explorer is one page that drives all three engines - routes, isochrones, matrices,
+geocoding, server-rendered images - and shows the matching command next to every
+answer. It needs one more port: add `-p 8080:8080` to the command above and open
+`http://localhost:8080`.
+
 Give it a moment to start - Photon opens its search index in a few seconds for a country
 this size, several minutes for the largest ones. Then check that it answers, a car route
 from Nicosia to Limassol:
