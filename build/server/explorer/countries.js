@@ -13,6 +13,7 @@ export const COUNTRIES = [
   { name: "Malaysia", slug: "malaysia", center: [109.5, 3.6], zoom: 5.2 },
   { name: "Serbia", slug: "serbia", center: [20.8, 44.0], zoom: 6.8 },
   { name: "Singapore", slug: "singapore", center: [103.82, 1.35], zoom: 10.5 },
+  { name: "South Africa", slug: "south-africa", center: [25.0, -29.0], zoom: 5.2 },
   { name: "South Korea", slug: "south-korea", center: [127.8, 36.4], zoom: 6.5 },
   { name: "Vietnam", slug: "vietnam", center: [107.0, 16.0], zoom: 5 },
 ];

@@ -84,6 +84,7 @@ Please keep your usage fair. No SLA - this is a demo that may change or disappea
 | 🇲🇾 | Malaysia | 1.1 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/malaysia` |
 | 🇷🇸 | Serbia | 1.8 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/serbia` |
 | 🇸🇬 | Singapore | 0.9 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/singapore` |
+| 🇿🇦 | South Africa | 1.4 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/south-africa` |
 | 🇰🇷 | South Korea | 1.9 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/south-korea` |
 | 🇻🇳 | Vietnam | 1.2 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/vietnam` |
 

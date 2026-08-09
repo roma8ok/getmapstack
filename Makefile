@@ -13,6 +13,7 @@ region.kazakhstan = asia
 region.malaysia = asia
 region.serbia = europe
 region.singapore = asia
+region.south-africa = africa
 region.south-korea = asia
 region.vietnam = asia
 

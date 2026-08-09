@@ -25,6 +25,7 @@ case "$COUNTRY" in
   malaysia) CC="my" ;;
   serbia) CC="rs" ;;
   singapore) CC="sg" ;;
+  south-africa) CC="za" ;;
   south-korea) CC="kr" ;;
   vietnam) CC="vn" ;;
   *) echo "Error: no ISO country code mapped for '$COUNTRY'. Add it to run-nominatim-import.sh."; exit 1 ;;
