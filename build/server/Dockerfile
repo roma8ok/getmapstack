@@ -39,17 +39,15 @@ ADD --checksum=sha256:c91de2db460ef7bece33e6bc67dbdd6b05d161242025c69ece19f3efc8
 FROM martin-fetch-${TARGETARCH} AS martin-fetch
 RUN mkdir -p /out && tar -xzf /tmp/martin.tar.gz -C /out martin
 
-# The explorer's static file server. Built on the build host so the cross-compile is
-# never QEMU-emulated; the standard library is the only dependency.
-FROM --platform=$BUILDPLATFORM golang:1.26 AS explorer-build
+FROM --platform=$BUILDPLATFORM golang:1.26 AS gateway-build
 ARG TARGETARCH
 WORKDIR /src
-COPY explorer-server/ ./
+COPY gateway/ ./
 # Go ships no precompiled standard library, so without the cache mount every cold run of
 # this stage recompiles net/http and its dependencies from scratch - once per target
-# platform, and again after any edit under explorer-server/.
+# platform, and again after any edit under gateway/.
 RUN --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -ldflags="-s -w" -o /out/explorer-server .
+    CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -ldflags="-s -w" -o /out/gateway .
 
 # Runs natively on the build host ($BUILDPLATFORM) so the multi-GB tar
 # extraction is never QEMU-emulated. The complete /data content is assembled
@@ -127,7 +125,7 @@ RUN echo "/usr/local/lib/valhalla-deps" > /etc/ld.so.conf.d/00-valhalla.conf && 
 RUN ! ldd /usr/local/bin/valhalla_service | grep -q 'not found'
 
 COPY --from=martin-fetch /out/martin /usr/local/bin/martin
-COPY --from=explorer-build /out/explorer-server /usr/local/bin/explorer-server
+COPY --from=gateway-build /out/gateway /usr/local/bin/gateway
 
 ADD --checksum=sha256:6ea66d598a3f6fc1b59b0f81ad4f8abee72ccdb9d3db03bc12008974cdebd58d --chmod=644 \
     https://github.com/komoot/photon/releases/download/1.2.1/photon-1.2.1.jar /opt/photon.jar
@@ -150,9 +148,9 @@ USER getmapstack
 LABEL org.opencontainers.image.source="https://github.com/roma8ok/getmapstack" \
       org.opencontainers.image.licenses="MIT AND Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND ODbL-1.0 AND OFL-1.1 AND CC-BY-4.0 AND CC0-1.0 AND (MIT OR Apache-2.0)"
 
-EXPOSE 8002 2322 3000 8080
+EXPOSE 4326
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5m \
-  CMD curl -sf http://localhost:8002/status && curl -sf http://localhost:2322/status && curl -sf http://localhost:3000/health || exit 1
+  CMD gateway --healthcheck
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -1,29 +1,20 @@
-// Where the engines are is decided by where this page came from, never by the user.
-// The rule keys on the hostname, not on the port: publishing the container as
-// -p 9090:8080 is an ordinary thing to do, and a port-based rule sends that page to
-// the public demo instead of the container beside it - silently, because everything
-// still works, just against somebody else's data. An unrecognised host is therefore
-// assumed to be an image serving its own engines, which is the safe direction to be
-// wrong in. The scheme follows the page's own, so a deployment that terminates TLS in
-// front of the engines keeps working.
+// Where the engines are is decided by where this page came from, never by the user. An
+// image serves the page and the engines from one origin under fixed prefixes, so the page
+// needs no port knowledge at all: a container published on any host port works, and so
+// does a deployment that terminates TLS in front. The public website is the exception,
+// and the reason this function is not simply loc.origin: it is served from a different
+// host than the API, so it has to name the API rather than derive it.
 const PUBLIC_SITE_HOSTS = new Set(["getmapstack.com", "www.getmapstack.com"]);
 
 export function resolveTarget(loc = window.location) {
-  if (PUBLIC_SITE_HOSTS.has(loc.hostname)) {
-    const api = "https://api.getmapstack.com";
-    return {
-      valhalla: `${api}/valhalla`,
-      photon: `${api}/photon`,
-      martin: `${api}/martin`,
-      hosted: true,
-    };
-  }
-  const origin = `${loc.protocol}//${loc.hostname}`;
+  const origin = PUBLIC_SITE_HOSTS.has(loc.hostname)
+    ? "https://api.getmapstack.com"
+    : loc.origin;
   return {
-    valhalla: `${origin}:8002`,
-    photon: `${origin}:2322`,
-    martin: `${origin}:3000`,
-    hosted: false,
+    valhalla: `${origin}/valhalla`,
+    photon: `${origin}/photon`,
+    martin: `${origin}/martin`,
+    hosted: PUBLIC_SITE_HOSTS.has(loc.hostname),
   };
 }
 
@@ -35,13 +26,16 @@ export class HttpError extends Error {
   }
 }
 
-// No Content-Type header on purpose. Valhalla answers OPTIONS with 405, so any
-// preflighted request fails outright; a plain string body makes fetch send
-// text/plain;charset=UTF-8, which is CORS-safelisted and never preflighted. Valhalla
-// parses the body as JSON regardless of the declared type.
+// Served from its own image, this page is same-origin with the engines and nothing is
+// preflighted, so the declared content type costs nothing. A cross-origin caller - the
+// public website, or anyone's own page pointed at a container - IS preflighted, because
+// application/json is not CORS-safelisted. That is safe now only because the gateway
+// answers OPTIONS itself; the routing engine behind it still refuses it with 405, which
+// is why this request used to be sent without a content type at all.
 export async function postJSON(base, path, body, signal) {
   const resp = await fetch(base + path, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
     signal,
   });

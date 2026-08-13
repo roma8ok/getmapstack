@@ -92,9 +92,21 @@ valhalla_build_config \
   --mjolnir-concurrency "${CONCURRENCY}" \
   > "${CONFIG_FILE}"
 
-# Step 4: Build timezone database
+# Step 4: Build timezone database. valhalla_build_timezones downloads the timezone
+# shapefile from GitHub releases with a single unretried curl, and that download fails
+# intermittently - so retry the whole call, and accept only a non-empty database.
 echo "=== Building timezone database ==="
-valhalla_build_timezones > "${TILE_DIR}/timezones.sqlite"
+for ATTEMPT in 1 2 3 4 5; do
+  if valhalla_build_timezones > "${TILE_DIR}/timezones.sqlite" && [[ -s "${TILE_DIR}/timezones.sqlite" ]]; then
+    break
+  fi
+  if [[ "${ATTEMPT}" -eq 5 ]]; then
+    echo "valhalla_build_timezones failed after ${ATTEMPT} attempts"
+    exit 1
+  fi
+  echo "valhalla_build_timezones failed (attempt ${ATTEMPT}/5), retrying in 60s"
+  sleep 60
+done
 
 # Step 5: Build admin database
 echo "=== Building admin database ==="

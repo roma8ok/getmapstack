@@ -1,8 +1,8 @@
 // One entry per published country image. What the selector actually shows is decided by
 // availableCountries below: an image states its own slugs in a manifest, and only the
 // website copy, which has none, falls back to filtering these by the tile server's
-// bounds. Either way a single-country target hides the selector and the group image
-// shows all of them. The centre and zoom are only where the map flies on a pick.
+// bounds. Either way one available country hides the selector and several show it. The
+// centre and zoom are only where the map flies on a pick.
 export const COUNTRIES = [
   { name: "Belgium", slug: "belgium", center: [4.47, 50.5], zoom: 7.5 },
   { name: "Brunei", slug: "brunei", center: [114.72, 4.53], zoom: 9 },

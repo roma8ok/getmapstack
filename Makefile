@@ -31,7 +31,7 @@ VALHALLA_CONCURRENCY ?=
 # Target platforms for server images; override for single-arch dev builds (e.g. PLATFORMS=linux/arm64)
 PLATFORMS ?= linux/amd64,linux/arm64
 
-.PHONY: build-valhalla-builder create-valhalla-tiles build-photon-builder create-photon-data build-planetiler-builder create-vector-tiles build-server fetch-osm update-bright-style help
+.PHONY: build-valhalla-builder create-valhalla-tiles build-photon-builder create-photon-data build-planetiler-builder create-vector-tiles build-server test-gateway fetch-osm update-bright-style help
 
 build-valhalla-builder:
 	cp build/pbf-slugs.txt build/valhalla/pbf-slugs.txt
@@ -98,13 +98,16 @@ endif
 	@test -f artifacts/tiles-$(COUNTRY).pmtiles || { echo "Error: artifacts/tiles-$(COUNTRY).pmtiles not found. Run 'make create-vector-tiles COUNTRY=$(COUNTRY)' first."; exit 1; }
 	@echo "=== Building getmapstack/$(COUNTRY) ==="
 	cp artifacts/valhalla-$(COUNTRY).tar build/server/valhalla.tar
-	jq '.mjolnir.tile_extract = "/data/valhalla.tar" | .mjolnir.tile_dir = "/data"' artifacts/valhalla-$(COUNTRY).json > build/server/valhalla.json
+	jq '.mjolnir.tile_extract = "/data/valhalla.tar" | .mjolnir.tile_dir = "/data" | .httpd.service.listen = "tcp://127.0.0.1:8002"' artifacts/valhalla-$(COUNTRY).json > build/server/valhalla.json
 	cp artifacts/photon-$(COUNTRY).tar build/server/photon-data.tar
 	cp artifacts/tiles-$(COUNTRY).pmtiles build/server/tiles.pmtiles
 	jq -n --args '{countries: $$ARGS.positional}' "$(COUNTRY)" > build/server/explorer-countries.json
 	docker build --platform $(PLATFORMS) -t getmapstack/$(COUNTRY) ./build/server
 	rm build/server/valhalla.tar build/server/valhalla.json build/server/photon-data.tar build/server/tiles.pmtiles build/server/explorer-countries.json
 	@echo "=== Built getmapstack/$(COUNTRY) ==="
+
+test-gateway:
+	cd build/server/gateway && go test ./... -count=1
 
 # Diff the vendored map style template against upstream, patched the same way. BRIGHT_REF
 # defaults to the commit pinned in the server Dockerfile; pass BRIGHT_REF=main to see what
@@ -141,6 +144,7 @@ help::
 	@echo "  Server image (routing + geocoding + vector tiles):"
 	@echo "  make build-server COUNTRY=cyprus               Build server image getmapstack/cyprus"
 	@echo "  ... PLATFORMS=linux/arm64                      Single-arch override (default: linux/amd64,linux/arm64)"
+	@echo "  make test-gateway                              Run unit tests for the in-image gateway (needs Go)"
 	@echo ""
 	@echo "  Map style:"
 	@echo "  make update-bright-style                      Diff the vendored map style against upstream"
@@ -150,5 +154,6 @@ help::
 	@echo ""
 	@echo "Available countries: $(AVAILABLE_LIST)"
 
-# Optional local targets; -include skips this silently when the file is absent
--include private.mk
+# Local extension point: any *.mk beside this file is pulled in, and -include stays quiet
+# when there is none. Put your own targets in one rather than editing this file.
+-include *.mk

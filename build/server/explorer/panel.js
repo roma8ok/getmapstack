@@ -164,7 +164,7 @@ export function renderRunCard(slug, hosted) {
   run.innerHTML = `
     <div class="run-head"><b>No limits - on your own machine</b><button id="run-copy">copy</button></div>
     <div class="run-why">the same thing, locally, with no rate limiting</div>
-    <pre class="mono" id="run-cmd">docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 -p 8080:8080 ghcr.io/roma8ok/getmapstack/${esc(slug)}</pre>
-    <div class="after">Then open <code>localhost:8080</code> - this same explorer, your data.</div>`;
+    <pre class="mono" id="run-cmd">docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/${esc(slug)}</pre>
+    <div class="after">Then open <code>localhost:4326</code> - this same explorer, your data.</div>`;
   el("run-copy").addEventListener("click", () => copyText(el("run-cmd").textContent));
 }

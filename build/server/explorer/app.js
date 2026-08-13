@@ -218,8 +218,8 @@ main().catch((err) => {
       <div class="err"><span class="code">!</span>
         <span class="msg">Cannot reach the engines behind this page.</span></div>
       <div class="errnote">Tried <code>${target.martin}</code>. This page expects the
-        routing, geocoding and map services on ports 8002, 2322 and 3000 of
-        <code>${window.location.hostname}</code>. If the container publishes them
+        routing, geocoding and map services under /valhalla, /photon and /martin on
+        <code>${window.location.origin}</code>. If the container serves them
         elsewhere, it cannot find them.</div>
     </div>`;
   console.error("explorer: bootstrap failed", err);

@@ -15,30 +15,29 @@ Routing via [Valhalla](https://valhalla.github.io/valhalla/) 3.8.3, geocoding vi
 [Martin 1.13.0](https://github.com/maplibre/martin) (built with
 [Planetiler 0.10.2](https://github.com/onthegomap/planetiler)).
 
-<img src="https://raw.githubusercontent.com/roma8ok/getmapstack/main/assets/how-it-works.svg" width="880" alt="One docker run command starts a container with Valhalla routing on port 8002, Photon geocoding on port 2322 and Martin vector tiles on port 3000, backed by OSM data baked into the image; your application talks to all three.">
+<img src="https://raw.githubusercontent.com/roma8ok/getmapstack/main/assets/how-it-works.svg" width="880" alt="One docker run command starts a container that publishes a single port, 4326. Your application sends POST /valhalla/route, GET /photon/api and GET /martin/basemap/{z}/{x}/{y} to that one port, and each prefix reaches its own service inside the container: Valhalla for routing, Photon for geocoding, Martin for vector tiles, over country OSM data baked into the image.">
 
 ## Quick start
 
 ```bash
-docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/cyprus
+docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/cyprus
 ```
 
 Images are multi-arch: linux/amd64 and linux/arm64 (Apple Silicon, AWS Graviton).
 
-Once it starts, the map catalog UI is at `http://localhost:3000/` - browse the vector
-tileset, style, fonts and sprites straight from a browser.
-
-The explorer is one page that drives all three engines - routes, isochrones, matrices,
-geocoding, server-rendered images - and shows the matching command next to every
-answer. It needs one more port: add `-p 8080:8080` to the command above and open
-`http://localhost:8080`.
+Once it starts, open `http://localhost:4326` for the explorer - one page that drives all
+three engines (routes, isochrones, matrices, geocoding, server-rendered images) and shows
+the matching command next to every answer. The map catalog UI - the vector tileset, style,
+fonts and sprites - is at `http://localhost:4326/martin/`.
 
 Give it a moment to start - Photon opens its search index in a few seconds for a country
-this size, several minutes for the largest ones. Then check that it answers, a car route
-from Nicosia to Limassol:
+this size, several minutes for the largest ones. `curl -sf localhost:4326/healthz` answers
+`{"status":"ok"}` once all three engines are up, and the container's own healthcheck runs
+that same probe, so `docker ps` reports `healthy` at the same moment. Then check that it
+answers, a car route from Nicosia to Limassol:
 
 ```bash
-curl localhost:8002/route \
+curl localhost:4326/valhalla/route \
   -d '{"locations":[{"lat":35.1856,"lon":33.3823},{"lat":34.6786,"lon":33.0413}],"costing":"auto"}'
 ```
 
@@ -75,18 +74,18 @@ Please keep your usage fair. No SLA - this is a demo that may change or disappea
 
 | | Country | Size | Run |
 |---|---------|------|-----|
-| 🇧🇪 | Belgium | 2.3 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/belgium` |
-| 🇧🇳 | Brunei | 0.8 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/brunei` |
-| 🇨🇾 | Cyprus | 0.4 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/cyprus` |
-| 🇬🇪 | Georgia | 0.7 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/georgia` |
-| 🇮🇩 | Indonesia | 2.7 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/indonesia` |
-| 🇰🇿 | Kazakhstan | 1.4 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/kazakhstan` |
-| 🇲🇾 | Malaysia | 1.1 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/malaysia` |
-| 🇷🇸 | Serbia | 1.8 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/serbia` |
-| 🇸🇬 | Singapore | 0.9 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/singapore` |
-| 🇿🇦 | South Africa | 1.4 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/south-africa` |
-| 🇰🇷 | South Korea | 1.9 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/south-korea` |
-| 🇻🇳 | Vietnam | 1.2 GB | `docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 ghcr.io/roma8ok/getmapstack/vietnam` |
+| 🇧🇪 | Belgium | 2.3 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/belgium` |
+| 🇧🇳 | Brunei | 0.8 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/brunei` |
+| 🇨🇾 | Cyprus | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/cyprus` |
+| 🇬🇪 | Georgia | 0.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/georgia` |
+| 🇮🇩 | Indonesia | 2.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/indonesia` |
+| 🇰🇿 | Kazakhstan | 1.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/kazakhstan` |
+| 🇲🇾 | Malaysia | 1.1 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/malaysia` |
+| 🇷🇸 | Serbia | 1.8 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/serbia` |
+| 🇸🇬 | Singapore | 0.9 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/singapore` |
+| 🇿🇦 | South Africa | 1.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/south-africa` |
+| 🇰🇷 | South Korea | 1.9 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/south-korea` |
+| 🇻🇳 | Vietnam | 1.2 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/vietnam` |
 
 ## What you get
 
@@ -96,30 +95,32 @@ runs against a plain `docker run` of a country image, with no configuration.
 
 | Task | Request | Service |
 |------|---------|---------|
-| Route between two or more points | [`POST /route`](#route) | `/valhalla` (:8002) |
-| Route for a given departure or arrival time | [`POST /route`](#time-dependent-route) | `/valhalla` (:8002) |
-| Visit many stops in the best order | [`POST /optimized_route`](#optimized-route) | `/valhalla` (:8002) |
-| Time and distance for many pairs at once | [`POST /sources_to_targets`](#time-and-distance-matrix) | `/valhalla` (:8002) |
-| Area reachable within N minutes | [`POST /isochrone`](#isochrone) | `/valhalla` (:8002) |
-| Meeting point for several starting points | [`POST /centroid`](#meeting-point) | `/valhalla` (:8002) |
-| Snap a GPS track to the road network | [`POST /trace_route`](#map-matching) | `/valhalla` (:8002) |
-| Per-segment attributes of a snapped track | [`POST /trace_attributes`](#map-matching) | `/valhalla` (:8002) |
-| Inspect what the router explored | [`POST /expansion`](#expansion) | `/valhalla` (:8002) |
-| Nearest road to a coordinate | [`POST /locate`](#locate) | `/valhalla` (:8002) |
-| Road network as vector tiles | [`POST /tile`](#road-network-tiles) | `/valhalla` (:8002) |
-| Coordinates from a place name, search and autocomplete | [`GET /api?q=`](#search) | `/photon` (:2322) |
-| Coordinates from address fields | [`GET /structured`](#structured-search) | `/photon` (:2322) |
-| Address from coordinates | [`GET /reverse`](#reverse-geocoding) | `/photon` (:2322) |
-| Vector basemap tiles for any map library | [`GET /basemap/{z}/{x}/{y}`](#vector-tiles) | `/martin` (:3000) |
-| Map style, fonts, icons | [`GET /style/bright`, `/font/...`, `/sprite/...`](#fonts-and-icons) | `/martin` (:3000) |
-| Static map images, no JS | [`GET/POST /style/bright/static/...`](#static-images) | `/martin` (:3000) |
-| Rendered raster tiles | [`GET /style/bright/{z}/{x}/{y}.png`](#rendered-raster-tiles) | `/martin` (:3000) |
-| Live PostGIS overlay | [`MARTIN_POSTGRES` env](#live-postgis-overlay) | `/martin` (:3000) |
+| Route between two or more points | [`POST /route`](#route) | `/valhalla` |
+| Route for a given departure or arrival time | [`POST /route`](#time-dependent-route) | `/valhalla` |
+| Visit many stops in the best order | [`POST /optimized_route`](#optimized-route) | `/valhalla` |
+| Time and distance for many pairs at once | [`POST /sources_to_targets`](#time-and-distance-matrix) | `/valhalla` |
+| Area reachable within N minutes | [`POST /isochrone`](#isochrone) | `/valhalla` |
+| Meeting point for several starting points | [`POST /centroid`](#meeting-point) | `/valhalla` |
+| Snap a GPS track to the road network | [`POST /trace_route`](#map-matching) | `/valhalla` |
+| Per-segment attributes of a snapped track | [`POST /trace_attributes`](#map-matching) | `/valhalla` |
+| Inspect what the router explored | [`POST /expansion`](#expansion) | `/valhalla` |
+| Nearest road to a coordinate | [`POST /locate`](#locate) | `/valhalla` |
+| Road network as vector tiles | [`POST /tile`](#road-network-tiles) | `/valhalla` |
+| Coordinates from a place name, search and autocomplete | [`GET /api?q=`](#search) | `/photon` |
+| Coordinates from address fields | [`GET /structured`](#structured-search) | `/photon` |
+| Address from coordinates | [`GET /reverse`](#reverse-geocoding) | `/photon` |
+| Vector basemap tiles for any map library | [`GET /basemap/{z}/{x}/{y}`](#vector-tiles) | `/martin` |
+| Map style, fonts, icons | [`GET /style/bright`, `/font/...`, `/sprite/...`](#fonts-and-icons) | `/martin` |
+| Static map images, no JS | [`GET/POST /style/bright/static/...`](#static-images) | `/martin` |
+| Rendered raster tiles | [`GET /style/bright/{z}/{x}/{y}.png`](#rendered-raster-tiles) | `/martin` |
+| Live PostGIS overlay | [`MARTIN_POSTGRES` env](#live-postgis-overlay) | `/martin` |
 | Versions and how old the data is | [`GET /status`](#data-freshness) | `/valhalla`, `/photon` |
-| Liveness check for the map service | [`GET /health`](#data-freshness) | `/martin` (:3000) |
+| Liveness check for the map service | [`GET /health`](#data-freshness) | `/martin` |
+| Whether the container is ready to serve | [`GET /healthz`](#data-freshness) | the container |
 
-Self-hosted, call the port directly: `localhost:8002/route`. On the hosted API the same
-paths sit behind a prefix: `https://api.getmapstack.com/valhalla/route`.
+The self-hosted and hosted paths are identical apart from the host:
+`localhost:4326/valhalla/route` self-hosted, `https://api.getmapstack.com/valhalla/route`
+hosted.
 
 Parameter-level reference for all three:
 [Valhalla API](https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/) ·
@@ -134,7 +135,7 @@ Cost options shape the result. This one avoids highways and tolls, asks for two
 alternatives and kilometers:
 
 ```bash
-curl localhost:8002/route -d '{
+curl localhost:4326/valhalla/route -d '{
   "locations":[{"lat":35.1856,"lon":33.3823},{"lat":34.6786,"lon":33.0413}],
   "costing":"auto",
   "costing_options":{"auto":{"use_highways":0.2,"use_tolls":0}},
@@ -154,7 +155,7 @@ Costing profiles: `auto`, `bicycle`, `pedestrian`, `truck`, `motorcycle`, `bus`,
 `motor_scooter`. Truck costing takes vehicle dimensions:
 
 ```bash
-curl localhost:8002/route -d '{
+curl localhost:4326/valhalla/route -d '{
   "locations":[{"lat":35.1856,"lon":33.3823},{"lat":34.6786,"lon":33.0413}],
   "costing":"truck",
   "costing_options":{"truck":{"height":4.11,"weight":21.77,"axle_load":9.07}}
@@ -167,7 +168,7 @@ Each vertex is a `[lon, lat]` pair, the reverse of the `lat`/`lon` keys `locatio
 in the same request:
 
 ```bash
-curl localhost:8002/route -d '{
+curl localhost:4326/valhalla/route -d '{
   "locations":[{"lat":35.1856,"lon":33.3823},{"lat":34.6786,"lon":33.0413}],
   "costing":"auto",
   "exclude_polygons":[[[33.36,35.15],[33.38,35.15],[33.38,35.17],[33.36,35.17],[33.36,35.15]]]
@@ -184,7 +185,7 @@ Decoded at precision 5, the route lands roughly ten times away from where it bel
 Use a precision-6 decoder, or ask for GeoJSON instead:
 
 ```bash
-curl localhost:8002/route -d '{
+curl localhost:4326/valhalla/route -d '{
   "locations":[{"lat":35.1856,"lon":33.3823},{"lat":34.6786,"lon":33.0413}],
   "costing":"auto",
   "shape_format":"geojson"
@@ -199,7 +200,7 @@ route, so every road is evaluated at the same moment. The answer carries local t
 and time zones per location:
 
 ```bash
-curl localhost:8002/route -d '{
+curl localhost:4326/valhalla/route -d '{
   "locations":[{"lat":35.1856,"lon":33.3823},{"lat":34.6786,"lon":33.0413}],
   "costing":"auto",
   "date_time":{"type":1,"value":"2026-08-03T08:00"}
@@ -222,7 +223,7 @@ Reorders the stops between the first and the last to make the trip shortest. Nic
 Paphos, Larnaca, Limassol in that order is 350.4 km:
 
 ```bash
-curl localhost:8002/optimized_route -d '{
+curl localhost:4326/valhalla/optimized_route -d '{
   "locations":[{"lat":35.1856,"lon":33.3823},{"lat":34.7754,"lon":32.4245},
                {"lat":34.9229,"lon":33.6233},{"lat":34.6786,"lon":33.0413}],
   "costing":"auto"
@@ -241,7 +242,7 @@ saved 101 km.
 Travel time and distance for every source-target pair, in one request:
 
 ```bash
-curl localhost:8002/sources_to_targets -d '{
+curl localhost:4326/valhalla/sources_to_targets -d '{
   "sources":[{"lat":35.1856,"lon":33.3823}],
   "targets":[{"lat":34.9229,"lon":33.6233},{"lat":35.0333,"lon":33.2000}],
   "costing":"auto"
@@ -261,7 +262,7 @@ though a direct route request between the same points succeeds.
 How far you get in 10 and 20 minutes by car, as polygons:
 
 ```bash
-curl localhost:8002/isochrone -d '{
+curl localhost:4326/valhalla/isochrone -d '{
   "locations":[{"lat":35.1856,"lon":33.3823}],
   "costing":"auto",
   "contours":[{"time":10,"color":"ff0000"},{"time":20,"color":"0000ff"}],
@@ -284,7 +285,7 @@ one location per request.
 Where several people should meet, by travel time rather than by geometry:
 
 ```bash
-curl localhost:8002/centroid -d '{
+curl localhost:4326/valhalla/centroid -d '{
   "locations":[{"lat":35.1856,"lon":33.3823},{"lat":34.6786,"lon":33.0413},{"lat":34.9229,"lon":33.6233}],
   "costing":"auto"
 }'
@@ -305,7 +306,7 @@ input order.
 Snap a raw GPS trace onto the road network and get a normal route back:
 
 ```bash
-curl localhost:8002/trace_route -d '{
+curl localhost:4326/valhalla/trace_route -d '{
   "shape":[{"lat":35.1856,"lon":33.3823},{"lat":35.1860,"lon":33.3830},
            {"lat":35.1869,"lon":33.3841},{"lat":35.1880,"lon":33.3855}],
   "costing":"auto",
@@ -321,7 +322,7 @@ curl localhost:8002/trace_route -d '{
 and `filters` keeps the response to the attributes you asked for:
 
 ```bash
-curl localhost:8002/trace_attributes -d '{
+curl localhost:4326/valhalla/trace_attributes -d '{
   "shape":[{"lat":35.1856,"lon":33.3823},{"lat":35.1860,"lon":33.3830},
            {"lat":35.1869,"lon":33.3841},{"lat":35.1880,"lon":33.3855}],
   "costing":"auto",
@@ -341,7 +342,7 @@ The search tree the router walked, as GeoJSON - useful for debugging a surprisin
 or visualizing reachability:
 
 ```bash
-curl localhost:8002/expansion -d '{
+curl localhost:4326/valhalla/expansion -d '{
   "locations":[{"lat":35.1856,"lon":33.3823}],
   "costing":"auto",
   "action":"isochrone",
@@ -363,7 +364,7 @@ search touched.
 What road a coordinate belongs to:
 
 ```bash
-curl localhost:8002/locate -d '{
+curl localhost:4326/valhalla/locate -d '{
   "locations":[{"lat":35.1856,"lon":33.3823}],
   "costing":"auto",
   "verbose":true
@@ -386,7 +387,7 @@ tile address goes in a nested `tile` object; the common `/z/x/y.mvt` path form i
 supported:
 
 ```bash
-curl localhost:8002/tile -d '{"tile":{"z":14,"x":9711,"y":6479}}' -o nicosia.mvt
+curl localhost:4326/valhalla/tile -d '{"tile":{"z":14,"x":9711,"y":6479}}' -o nicosia.mvt
 ```
 
 The same request as a GET with URL-encoded JSON works as a tile template - point
@@ -396,7 +397,7 @@ MapLibre at it and the road network renders like any vector source:
 sources: {
   valhalla: {
     type: "vector",
-    tiles: ["http://localhost:8002/tile?json=%7B%22tile%22%3A%7B%22z%22%3A{z}%2C%22x%22%3A{x}%2C%22y%22%3A{y}%7D%7D"],
+    tiles: ["http://localhost:4326/valhalla/tile?json=%7B%22tile%22%3A%7B%22z%22%3A{z}%2C%22x%22%3A{x}%2C%22y%22%3A{y}%7D%7D"],
     minzoom: 7
   }
 }
@@ -413,7 +414,7 @@ land use, water and labels, see [Map](#map).
 Place name to coordinates. `lang` picks the language of the returned names:
 
 ```bash
-curl "localhost:2322/api?q=Nicosia&limit=1&lang=en"
+curl "localhost:4326/photon/api?q=Nicosia&limit=1&lang=en"
 ```
 
 ```json
@@ -428,7 +429,7 @@ The index is built for prefix matching, so autocomplete is the same endpoint wit
 partial query:
 
 ```bash
-curl "localhost:2322/api?q=Limas&limit=5&lang=en"
+curl "localhost:4326/photon/api?q=Limas&limit=5&lang=en"
 ```
 
 ```json
@@ -444,11 +445,11 @@ OSM tag - `bbox` takes `minLon,minLat,maxLon,maxLat`, the reverse order of the
 `lat`/`lon` query parameters on the same endpoint:
 
 ```bash
-curl "localhost:2322/api?q=Agios&limit=3&lat=34.6786&lon=33.0413&lang=en"
-curl "localhost:2322/api?q=Agios&limit=3&bbox=32.9,34.6,33.2,34.8&lang=en"
-curl "localhost:2322/api?q=Larnaca&limit=3&layer=city&lang=en"
-curl "localhost:2322/api?q=Nicosia&limit=3&countrycode=CY&lang=en"
-curl "localhost:2322/api?q=hospital&limit=3&osm_tag=amenity:hospital&lang=en"
+curl "localhost:4326/photon/api?q=Agios&limit=3&lat=34.6786&lon=33.0413&lang=en"
+curl "localhost:4326/photon/api?q=Agios&limit=3&bbox=32.9,34.6,33.2,34.8&lang=en"
+curl "localhost:4326/photon/api?q=Larnaca&limit=3&layer=city&lang=en"
+curl "localhost:4326/photon/api?q=Nicosia&limit=3&countrycode=CY&lang=en"
+curl "localhost:4326/photon/api?q=hospital&limit=3&osm_tag=amenity:hospital&lang=en"
 ```
 
 The last one turns the geocoder into a POI search:
@@ -466,7 +467,7 @@ geocoder would otherwise fold, and `include`/`exclude` filter by category
 one kind near a point:
 
 ```bash
-curl "localhost:2322/api?include=osm.amenity.hospital&limit=3&lat=35.1856&lon=33.3823&lang=en"
+curl "localhost:4326/photon/api?include=osm.amenity.hospital&limit=3&lat=35.1856&lon=33.3823&lang=en"
 ```
 
 #### Structured search
@@ -476,7 +477,7 @@ free-text guessing and pass the fields directly. Any subset of `street`, `housen
 `city`, `district`, `county`, `state`, `postcode` and `countrycode` works:
 
 ```bash
-curl "localhost:2322/structured?street=Zappeiou&housenumber=21&city=Nicosia&lang=en"
+curl "localhost:4326/photon/structured?street=Zappeiou&housenumber=21&city=Nicosia&lang=en"
 ```
 
 ```json
@@ -492,7 +493,7 @@ fields cannot mix in one request.
 Coordinates to address:
 
 ```bash
-curl "localhost:2322/reverse?lat=35.1853&lon=33.3825&limit=1"
+curl "localhost:4326/photon/reverse?lat=35.1853&lon=33.3825&limit=1"
 ```
 
 ```json
@@ -503,7 +504,7 @@ curl "localhost:2322/reverse?lat=35.1853&lon=33.3825&limit=1"
 example:
 
 ```bash
-curl "localhost:2322/reverse?lat=35.1853&lon=33.3825&radius=5&limit=3&layer=street&lang=en"
+curl "localhost:4326/photon/reverse?lat=35.1853&lon=33.3825&radius=5&limit=3&layer=street&lang=en"
 ```
 
 ```json
@@ -519,7 +520,7 @@ check the number of features rather than the presence of a name.
 
 Martin serves a full vector basemap built by Planetiler from the same OSM snapshot as
 routing and geocoding - tiles, fonts, icons, a ready-to-use style, static map images and
-rendered raster tiles, all on port 3000. Any map rendered from these tiles must show
+rendered raster tiles, all under `/martin`. Any map rendered from these tiles must show
 visible credit: `(c) OpenMapTiles (c) OpenStreetMap contributors`. The tileset carries that
 string in its TileJSON, so a MapLibre map built on the shipped style displays it on its own.
 Static images and rendered raster tiles come back as bare pixels - whatever page or
@@ -536,11 +537,11 @@ at your own and serve it from wherever you like.
 TileJSON describes the tileset; `/basemap/{z}/{x}/{y}` serves the tiles themselves:
 
 ```bash
-curl localhost:3000/basemap
+curl localhost:4326/martin/basemap
 ```
 
 ```json
-{"tiles":["http://localhost:3000/basemap/{z}/{x}/{y}"],"name":"OpenMapTiles","attribution":"<a href=\"https://www.openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">&copy; OpenStreetMap contributors</a>","bounds":[31.95244,34.2337399,34.96147,36.00323],"minzoom":0,"maxzoom":14}
+{"tiles":["http://localhost:4326/martin/basemap/{z}/{x}/{y}"],"name":"OpenMapTiles","attribution":"<a href=\"https://www.openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">&copy; OpenStreetMap contributors</a>","bounds":[31.95244,34.2337399,34.96147,36.00323],"minzoom":0,"maxzoom":14}
 ```
 
 Point MapLibre GL JS at the ready-made style instead of wiring up sources by hand:
@@ -550,7 +551,7 @@ import maplibregl from "maplibre-gl";
 
 new maplibregl.Map({
   container: "map",
-  style: "http://localhost:3000/style/bright",
+  style: "http://localhost:4326/martin/style/bright",
   center: [33.3823, 35.1856],
   zoom: 12
 });
@@ -559,7 +560,7 @@ new maplibregl.Map({
 #### Fonts and icons
 
 `/font/{fontstack}/{range}` cuts glyph PBFs on the fly for whatever text a style's layers
-need - `curl "localhost:3000/font/Noto%20Sans%20Regular/0-255"` (URL-encode the space in
+need - `curl "localhost:4326/martin/font/Noto%20Sans%20Regular/0-255"` (URL-encode the space in
 the fontstack name). `/sprite/bright.png` and
 `/sprite/bright.json` (plus `@2x` and an `sdf_sprite/` variant for tintable icons) serve
 the icon images the style's point layers reference.
@@ -570,14 +571,14 @@ Render a PNG or JPEG server-side, no browser or JavaScript involved - point, zoo
 size go in the path:
 
 ```bash
-curl "localhost:3000/style/bright/static/33.3823,35.1856,13/600x400.png" -o map.png
+curl "localhost:4326/martin/style/bright/static/33.3823,35.1856,13/600x400.png" -o map.png
 ```
 
 POST a GeoJSON `FeatureCollection` to draw markers, lines or polygons on top of the same
 view:
 
 ```bash
-curl -X POST "localhost:3000/style/bright/static/33.3823,35.1856,13/600x400.png" \
+curl -X POST "localhost:4326/martin/style/bright/static/33.3823,35.1856,13/600x400.png" \
   -H "Content-Type: application/json" \
   -d '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[33.3823,35.1856]},"properties":{"circle-radius":8,"circle-color":"#e11"}}]}' \
   -o map-overlay.png
@@ -591,26 +592,27 @@ The same style pre-rendered into ordinary `{z}/{x}/{y}.png` raster tiles, for cl
 that don't speak vector tiles:
 
 ```bash
-curl "localhost:3000/style/bright/12/2427/1619.png" -o tile.png
+curl "localhost:4326/martin/style/bright/12/2427/1619.png" -o tile.png
 ```
 
 #### Serving to another host
 
-The style's tile/glyph/sprite URLs default to `http://localhost:3000` - fine inside a
-single container, wrong once a browser on another machine needs to fetch them. Set
-`PUBLIC_URL` and the entrypoint templates it into the style at startup:
+The style's tile/glyph/sprite URLs default to `http://localhost:4326/martin` - fine
+inside a single container, wrong once a browser on another machine needs to fetch them.
+Set `PUBLIC_URL` to the martin-prefixed address a browser can reach, and the entrypoint
+templates it into the style at startup:
 
 ```bash
-docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 \
-  -e PUBLIC_URL=https://maps.example.com \
+docker run -p 4326:4326 \
+  -e PUBLIC_URL=https://maps.example.com/martin \
   ghcr.io/roma8ok/getmapstack/cyprus
 ```
 
-Static images and rendered raster tiles are fetched by Martin from inside the container,
-so if `PUBLIC_URL` is not reachable from there, render through the second style
-(`/style/bright-local/static/...`, `/style/bright-local/{z}/{x}/{y}.png`) instead of
-`/style/bright/...` - it always points at `localhost:3000` no matter what `PUBLIC_URL` is
-set to. `bright` is the one to hand to browsers.
+Static images and rendered raster tiles are drawn by Martin inside the container, which
+often cannot reach `PUBLIC_URL` itself - a public hostname, a certificate, a firewall in
+the way. It does not have to: a render request under `/style/bright/...` is served from an
+internal copy of the style whose URLs never leave the container, whatever `PUBLIC_URL` is
+set to. One style id, `bright`, for browsers and for rendering alike.
 
 #### Live PostGIS overlay
 
@@ -630,7 +632,7 @@ Leave it unset and the map stays fully static - no database, no extra moving par
 The routing and geocoding engines report their version and when their data was built:
 
 ```bash
-curl localhost:8002/status
+curl localhost:4326/valhalla/status
 ```
 
 ```json
@@ -638,7 +640,7 @@ curl localhost:8002/status
 ```
 
 ```bash
-curl localhost:2322/status
+curl localhost:4326/photon/status
 ```
 
 ```json
@@ -650,9 +652,32 @@ image also carries a date tag matching the OSM extract it was built from, next t
 `latest`. The vector tileset carries the same snapshot: all three services build from one
 pinned OSM download.
 
-The map service answers `curl localhost:3000/health` with `OK` - a liveness check, no
+The map service answers `curl localhost:4326/martin/health` with `OK` - a liveness check, no
 version or build date. The tileset's own metadata sits in its
 [TileJSON](#vector-tiles) instead.
+
+One probe covers the whole container: `curl localhost:4326/healthz` returns
+`{"status":"ok"}` once routing, geocoding and tiles all answer, and HTTP 503 with
+`{"error":"upstream unavailable","status":503}` while any of them is still opening its data
+or has died. That is the probe to give a load balancer or an orchestrator, and the one the
+image's own healthcheck runs. The verdict is cached for about five seconds, so polling it
+costs the engines nothing.
+
+### Environment variables
+
+Everything the container publishes arrives through one process, and these are its knobs.
+All have working defaults - a plain `docker run` needs none of them.
+
+| Variable | Default | What it does |
+|----------|---------|--------------|
+| `GMS_LISTEN` | `:4326` | Address inside the container. `-p 8080:4326` is the usual way to change the port you connect to; this changes the one the container itself binds. |
+| `GMS_MAX_BODY_BYTES` | `10485760` | Largest request body accepted, in bytes; over it, HTTP 413. Raise it for very long GPS traces posted to `/valhalla/trace_attributes`. The time a client is given to upload a body scales with this value, so a bigger limit is also a longer upload window. |
+| `GMS_UPSTREAM_TIMEOUT` | `60s` | How long an engine has to answer before the request fails with HTTP 504. Any Go duration (`90s`, `2m`). |
+| `GMS_EXPLORER_ROOT` | `/data/explorer` | Directory served at `/`. Mount your own page over it, or point this elsewhere, to replace the explorer. |
+
+Two more configure the map service specifically: `PUBLIC_URL`
+([serving to another host](#serving-to-another-host)) and `MARTIN_POSTGRES`
+([live PostGIS overlay](#live-postgis-overlay)).
 
 ### Not included
 
@@ -684,7 +709,7 @@ make create-valhalla-tiles COUNTRY=cyprus
 make create-photon-data COUNTRY=cyprus
 make create-vector-tiles COUNTRY=cyprus
 make build-server COUNTRY=cyprus
-docker run -p 8002:8002 -p 2322:2322 -p 3000:3000 getmapstack/cyprus
+docker run -p 4326:4326 getmapstack/cyprus
 ```
 
 `fetch-osm` pins one OSM snapshot so all three builders work from the same download. Intermediate artifacts (routing tiles, geocoding index, vector tiles) land in `artifacts/`. Images build for linux/amd64 and linux/arm64 by default - pass `PLATFORMS=linux/arm64` (or your platform) for a faster single-arch build. `make help` lists all targets and available countries.
