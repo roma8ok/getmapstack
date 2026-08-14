@@ -1,8 +1,8 @@
 // One entry per published country image. What the selector actually shows is decided by
-// availableCountries below: an image states its own slugs in a manifest, and only the
-// website copy, which has none, falls back to filtering these by the tile server's
-// bounds. Either way one available country hides the selector and several show it. The
-// centre and zoom are only where the map flies on a pick.
+// availableCountries below: an image states its own slugs in a manifest, and a page with
+// no manifest to read falls back to filtering these by the tile server's bounds. Either
+// way one available country hides the selector and several show it. The centre and zoom
+// are only where the map flies on a pick.
 export const COUNTRIES = [
   { name: "Belgium", slug: "belgium", center: [4.47, 50.5], zoom: 7.5 },
   { name: "Brunei", slug: "brunei", center: [114.72, 4.53], zoom: 9 },
@@ -34,8 +34,8 @@ function countriesWithin(bounds) {
 // geocoder inside each image carries only its own country's addresses. The image
 // therefore states what it serves. Fetched rather than awaited in turn: it depends on
 // nothing the page fetches, so it goes out with the style and the TileJSON instead of
-// adding a round trip of its own to the bootstrap - a round trip the website copy, which
-// has no manifest at all, would spend on a 404 before the page became usable.
+// adding a round trip of its own to the bootstrap - a round trip that, where no manifest
+// is served at all, would be spent on a 404 before the page became usable.
 export async function fetchManifest() {
   try {
     const resp = await fetch("./countries.json");
@@ -46,8 +46,8 @@ export async function fetchManifest() {
   return null;
 }
 
-// Without a manifest the bounds filter is the right answer: that is the website copy,
-// which targets the hosted image that really does carry every country.
+// Without a manifest the bounds filter is the right answer: an older image that shipped
+// no manifest still gets a usable selector rather than an empty one.
 export function availableCountries(manifest, bounds) {
   if (manifest) {
     const wanted = new Set(manifest);

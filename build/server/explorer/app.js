@@ -92,7 +92,7 @@ async function run() {
     // error card and the command beside it describe the new one. A tool whose own
     // render() threw partway also leaves half a drawing behind, and that goes here too.
     clearLayers();
-    panel.renderError(err, curl, target.hosted);
+    panel.renderError(err, curl);
   }
 }
 
@@ -127,9 +127,9 @@ async function main() {
   map.addControl(new maplibregl.NavigationControl(), "top-right");
   map.addControl(new maplibregl.ScaleControl());
 
-  // The selector doubles as the image chooser in the "run it yourself" card, so it is
-  // only useful when the target really carries several countries. Named countrySelect,
-  // not select: the tool framework defines a select() function.
+  // Picking a country flies the map to it - only useful when the target really carries
+  // several countries. Named countrySelect, not select: the tool framework defines a
+  // select() function.
   countrySelect = document.getElementById("country");
   const available = availableCountries(manifest, tilejson.bounds);
   if (available.length > 1) {
@@ -140,7 +140,6 @@ async function main() {
     countrySelect.addEventListener("change", () => {
       const c = available.find((x) => x.slug === countrySelect.value);
       map.flyTo({ center: c.center, zoom: c.zoom });
-      panel.renderRunCard(c.slug, target.hosted);
     });
   }
 
@@ -168,13 +167,6 @@ async function main() {
   const onLoad = () => {
     renderStrip();
     select(TOOLS[0]);
-    // Deliberately after select(): this handler is outside main()'s catch, so anything
-    // that throws above it silently swallows the run card too. The image to name is the
-    // one the page is actually talking to - the selector's when there is a choice, and
-    // the single available country's when there is not. Naming no image at all beats
-    // naming the wrong one.
-    const slug = countrySelect.value || available[0]?.slug;
-    if (slug) panel.renderRunCard(slug, target.hosted);
   };
   if (map.loaded()) onLoad();
   else map.on("load", onLoad);

@@ -24,10 +24,10 @@ let rasterCtx = null;
 let watchingRaster = false;
 
 function watchRasterTiles(ctx) {
-  // Only the three fields the error path reads. Keeping the run context itself would
+  // Only the two fields the error path reads. Keeping the run context itself would
   // hold the last visit's abort controller and point set alive for as long as the page
   // is open, because the wrapper below never goes away.
-  rasterCtx = { map: ctx.map, curl: ctx.curl, hosted: ctx.target.hosted };
+  rasterCtx = { map: ctx.map, curl: ctx.curl };
   if (watchingRaster) return;
   watchingRaster = true;
   const inner = window.fetch;
@@ -52,7 +52,6 @@ function watchRasterTiles(ctx) {
         panel.renderError(
           new HttpError(response.status, "the renderer refused a tile"),
           rasterCtx.curl,
-          rasterCtx.hosted,
         );
       }
       return response;
@@ -67,9 +66,8 @@ const staticURL = (ctx) => {
 };
 
 // The tile MapLibre will ask for anyway. Probing 0/0/0 would render the whole world
-// for nobody, and on the hosted API that is one of ten heavy requests a minute spent
-// on an image never shown. The source declares 512 px tiles, for which MapLibre's tile
-// zoom is the rounded map zoom.
+// for nobody, spending a heavy render on an image never shown. The source declares
+// 512 px tiles, for which MapLibre's tile zoom is the rounded map zoom.
 const centreTile = (map) => {
   const z = Math.round(map.getZoom());
   const { lng, lat } = map.getCenter();
@@ -146,7 +144,7 @@ export const mapTools = [
         // The renderer returns 512 px tiles, measured. Declaring 256 would make
         // MapLibre fetch a zoom level deeper and four times as many of them, draw
         // them at half scale against the vector basemap, and spend four times the
-        // budget on the heaviest endpoint the hosted API serves.
+        // requests rendering the same view.
         tileSize: 512,
       });
       ctx.map.addLayer({ id: "x-raster", type: "raster", source: "x-raster" });

@@ -77,11 +77,11 @@ func TestRouterForwardsTheClientAddress(t *testing.T) {
 			name: "inbound headers from a proxy in front are passed through",
 			host: "mapstack:4326", remoteAddr: "203.0.113.7:51000",
 			inbound: map[string]string{
-				"X-Forwarded-Host":  "api.getmapstack.com",
+				"X-Forwarded-Host":  "maps.example.com",
 				"X-Forwarded-Proto": "https",
 				"X-Forwarded-For":   "198.51.100.9",
 			},
-			wantHost: "api.getmapstack.com", wantProto: "https", wantFor: "198.51.100.9",
+			wantHost: "maps.example.com", wantProto: "https", wantFor: "198.51.100.9",
 		},
 		{
 			// TLS terminated at this hop rather than in front of it: nobody else can tell

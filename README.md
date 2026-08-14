@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**[Quick start](#quick-start)** · **[Hosted API](#hosted-api)** · **[Countries](#countries)** · **[What you get](#what-you-get)** · **[Build it yourself](#build-it-yourself)**
+**[Quick start](#quick-start)** · **[Countries](#countries)** · **[What you get](#what-you-get)** · **[Build it yourself](#build-it-yourself)**
 
 </div>
 
@@ -46,29 +46,6 @@ curl localhost:4326/valhalla/route \
 ```
 
 Every other method is in [What you get](#what-you-get).
-
-## Hosted API
-
-Try the stack without installing - the same services for all supported countries at `https://api.getmapstack.com` (`/valhalla`, `/photon` and `/martin` prefixes):
-
-```bash
-curl https://api.getmapstack.com/valhalla/route \
-  -d '{"locations":[{"lat":35.18,"lon":33.38},{"lat":34.67,"lon":33.04}],"costing":"auto"}'
-```
-
-```bash
-curl "https://api.getmapstack.com/photon/api?q=Nicosia&limit=1"
-```
-
-```bash
-curl "https://api.getmapstack.com/martin/basemap"
-```
-
-```bash
-curl "https://api.getmapstack.com/martin/style/bright/static/33.3823,35.1856,13/600x400.png" -o map.png
-```
-
-Please keep your usage fair. No SLA - this is a demo that may change or disappear; run your own container for unlimited use.
 
 ## Countries
 
@@ -117,10 +94,6 @@ runs against a plain `docker run` of a country image, with no configuration.
 | Versions and how old the data is | [`GET /status`](#data-freshness) | `/valhalla`, `/photon` |
 | Liveness check for the map service | [`GET /health`](#data-freshness) | `/martin` |
 | Whether the container is ready to serve | [`GET /healthz`](#data-freshness) | the container |
-
-The self-hosted and hosted paths are identical apart from the host:
-`localhost:4326/valhalla/route` self-hosted, `https://api.getmapstack.com/valhalla/route`
-hosted.
 
 Parameter-level reference for all three:
 [Valhalla API](https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/) ·

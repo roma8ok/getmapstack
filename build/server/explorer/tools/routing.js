@@ -93,9 +93,8 @@ const needsValue = (mode) => mode === "1" || mode === "2";
 // Records the state and, for the time mode, updates the two controls that depend on it -
 // the parameter card is not rebuilt when a select inside it changes. This fires no rerun
 // of its own: the panel's change listener already does that, and a second dispatch here
-// would send a duplicate request, which on the hosted API costs one out of the rate limit
-// for nothing. Capture, like every other listener in this page, so that the panel's
-// listener sees the state this one leaves behind.
+// would send a duplicate request for nothing. Capture, like every other listener in this
+// page, so that the panel's listener sees the state this one leaves behind.
 document.addEventListener("change", (e) => {
   const f = e.target.closest("[data-route]");
   if (!f) return;

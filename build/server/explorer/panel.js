@@ -46,10 +46,11 @@ const curlBlock = (curl) => `
     <div class="curl mono">${esc(curl)}</div>`;
 
 // navigator.clipboard exists only in a secure context. This page is served over plain
-// HTTP, so the API is there on localhost and on the hosted site and gone the moment the
-// same container is opened by LAN address or IP - which the target rule deliberately
-// supports. Reached that way, an unguarded writeText throws inside the click handler and
-// the button does nothing at all, with the reason only in a console nobody has open.
+// HTTP, so the API is there when the container is opened at localhost and gone the
+// moment the same container is opened by LAN address or IP - which the target rule
+// deliberately supports. Reached that way, an unguarded writeText throws inside the
+// click handler and the button does nothing at all, with the reason only in a console
+// nobody has open.
 function copyText(text) {
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).catch(() => selectionCopy(text));
@@ -130,10 +131,9 @@ export function renderWaiting(tool, have) {
       one.</div></div>`;
 }
 
-// A 429 is not a malfunction to hide: on the hosted API it is the argument for
-// running the image, so it is answered with the command that removes the limit.
-export function renderError(err, curl, hosted) {
-  const limit = err.status === 429;
+// A failure is reported with the request that produced it, whatever the status: the panel
+// never hides an error behind a friendlier message.
+export function renderError(err, curl) {
   // Not every failure is an HttpError. A bug in a tool's own rendering arrives here as
   // a plain Error with no status and no body, and reading .body off it would throw
   // inside the very function meant to report the problem - leaving the panel frozen on
@@ -144,27 +144,8 @@ export function renderError(err, curl, hosted) {
     <div class="card-head"><b>Response</b><span>${esc(status)}</span></div>
     <div class="card-body">
       <div class="err"><span class="code">${esc(status)}</span>
-        <span class="msg">${esc(limit ? "rate limit exceeded" : detail.slice(0, 200))}</span></div>
-      ${limit ? `<div class="errnote">This is the demo endpoint's limit. The heavy
-        methods - isochrones, matrices, optimised routes, meeting points, map matching,
-        expansion, and everything the map service renders, which is the static images
-        and the raster tiles - allow 10 requests a minute per address. Rendered tiles
-        are fetched again every time you pan, so they reach it quickest. The command
-        below removes the limit entirely.</div>` : ""}
+        <span class="msg">${esc(detail.slice(0, 200))}</span></div>
     </div>
     ${curlBlock(curl)}`;
   wireCopy(curl);
-  if (limit && hosted) el("run").classList.add("hot");
-}
-
-export function renderRunCard(slug, hosted) {
-  const run = el("run");
-  if (!hosted) return;
-  run.hidden = false;
-  run.innerHTML = `
-    <div class="run-head"><b>No limits - on your own machine</b><button id="run-copy">copy</button></div>
-    <div class="run-why">the same thing, locally, with no rate limiting</div>
-    <pre class="mono" id="run-cmd">docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/${esc(slug)}</pre>
-    <div class="after">Then open <code>localhost:4326</code> - this same explorer, your data.</div>`;
-  el("run-copy").addEventListener("click", () => copyText(el("run-cmd").textContent));
 }

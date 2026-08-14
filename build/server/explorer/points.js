@@ -22,8 +22,8 @@ export function createPoints(map, maplibregl, onChange) {
     const marker = new maplibregl.Marker({ element: el, draggable: true })
       .setLngLat(lngLat)
       .addTo(map);
-    // dragend, not drag: firing a request on every movement would exhaust the
-    // hosted rate limit in one gesture.
+    // dragend, not drag: firing a request on every movement would send one request per
+    // pixel of the gesture.
     marker.on("dragend", onChange);
     markers.push(marker);
   };

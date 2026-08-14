@@ -103,12 +103,10 @@ func newProxy(target *url.URL, prefix string, logger *slog.Logger, extraRewrite 
 // run - they are synthesized from this request. The synthesis is not cosmetic: the tile
 // server builds the absolute URLs it advertises in TileJSON from X-Forwarded-Host and
 // X-Forwarded-Proto, falling back to the Host header, which this proxy has just rewritten
-// to an in-container address no browser can reach.
-//
-// SYNC DUTY: a second, non-published proxy sits in front of this one in the owner-only
-// hosted deployment and carries an identical copy of this function, since the two cannot
-// share code. Keep both in lockstep - a one-sided change can silently break the address
-// TileJSON advertises without either copy's own tests noticing.
+// to an in-container address no browser can reach. Anything running its own proxy in
+// front of this container therefore has to pass the browser's host and scheme along - in
+// these headers, or at least in the Host header it forwards - or the tile server
+// advertises an address the client cannot reach, and nothing in here can notice.
 func setForwarded(pr *httputil.ProxyRequest) {
 	host := pr.In.Header.Get("X-Forwarded-Host")
 	if host == "" {
