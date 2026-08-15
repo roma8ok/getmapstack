@@ -16,17 +16,25 @@ done
 # ISO 3166-1 alpha-2 for the -country-codes Photon filter (also the hook for a
 # future per-region batch import).
 case "$COUNTRY" in
+  afghanistan) CC="af" ;;
+  armenia) CC="am" ;;
+  azerbaijan) CC="az" ;;
   belgium) CC="be" ;;
   brunei) CC="bn" ;;
   cyprus) CC="cy" ;;
   georgia) CC="ge" ;;
   indonesia) CC="id" ;;
   kazakhstan) CC="kz" ;;
+  kyrgyzstan) CC="kg" ;;
   malaysia) CC="my" ;;
+  mongolia) CC="mn" ;;
   serbia) CC="rs" ;;
   singapore) CC="sg" ;;
   south-africa) CC="za" ;;
   south-korea) CC="kr" ;;
+  tajikistan) CC="tj" ;;
+  turkmenistan) CC="tm" ;;
+  uzbekistan) CC="uz" ;;
   vietnam) CC="vn" ;;
   *) echo "Error: no ISO country code mapped for '$COUNTRY'. Add it to run-nominatim-import.sh."; exit 1 ;;
 esac

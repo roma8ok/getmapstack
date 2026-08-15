@@ -3,18 +3,27 @@
 # Optional overrides (e.g. PHOTON_HEAP=12g)
 -include .env
 
-# Country → region mapping
+# Country → region mapping. The region is Geofabrik's own tree, not geography: Armenia and
+# Azerbaijan live under asia while Georgia, their neighbour, lives under europe.
+region.afghanistan = asia
+region.armenia = asia
+region.azerbaijan = asia
 region.belgium = europe
 region.brunei = asia
 region.cyprus = europe
 region.georgia = europe
 region.indonesia = asia
 region.kazakhstan = asia
+region.kyrgyzstan = asia
 region.malaysia = asia
+region.mongolia = asia
 region.serbia = europe
 region.singapore = asia
 region.south-africa = africa
 region.south-korea = asia
+region.tajikistan = asia
+region.turkmenistan = asia
+region.uzbekistan = asia
 region.vietnam = asia
 
 REGION = $(region.$(COUNTRY))

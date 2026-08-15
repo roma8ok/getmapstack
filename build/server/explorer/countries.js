@@ -4,17 +4,25 @@
 // way one available country hides the selector and several show it. The centre and zoom
 // are only where the map flies on a pick.
 export const COUNTRIES = [
+  { name: "Afghanistan", slug: "afghanistan", center: [66.4, 33.9], zoom: 5.4 },
+  { name: "Armenia", slug: "armenia", center: [45.0, 40.2], zoom: 7.2 },
+  { name: "Azerbaijan", slug: "azerbaijan", center: [47.8, 40.3], zoom: 6.6 },
   { name: "Belgium", slug: "belgium", center: [4.47, 50.5], zoom: 7.5 },
   { name: "Brunei", slug: "brunei", center: [114.72, 4.53], zoom: 9 },
   { name: "Cyprus", slug: "cyprus", center: [33.2, 35.0], zoom: 8.5 },
   { name: "Georgia", slug: "georgia", center: [43.5, 42.0], zoom: 7 },
   { name: "Indonesia", slug: "indonesia", center: [117.0, -2.5], zoom: 4.2 },
   { name: "Kazakhstan", slug: "kazakhstan", center: [67.0, 48.0], zoom: 4.2 },
+  { name: "Kyrgyzstan", slug: "kyrgyzstan", center: [74.6, 41.2], zoom: 6.2 },
   { name: "Malaysia", slug: "malaysia", center: [109.5, 3.6], zoom: 5.2 },
+  { name: "Mongolia", slug: "mongolia", center: [103.5, 46.8], zoom: 4.4 },
   { name: "Serbia", slug: "serbia", center: [20.8, 44.0], zoom: 6.8 },
   { name: "Singapore", slug: "singapore", center: [103.82, 1.35], zoom: 10.5 },
   { name: "South Africa", slug: "south-africa", center: [25.0, -29.0], zoom: 5.2 },
   { name: "South Korea", slug: "south-korea", center: [127.8, 36.4], zoom: 6.5 },
+  { name: "Tajikistan", slug: "tajikistan", center: [71.0, 38.8], zoom: 6.4 },
+  { name: "Turkmenistan", slug: "turkmenistan", center: [59.0, 39.0], zoom: 5.4 },
+  { name: "Uzbekistan", slug: "uzbekistan", center: [64.6, 41.4], zoom: 5.2 },
   { name: "Vietnam", slug: "vietnam", center: [107.0, 16.0], zoom: 5 },
 ];
 
