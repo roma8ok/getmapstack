@@ -1,6 +1,13 @@
 # Geofabrik bundles some countries into a single extract. A country absent from this
 # table uses its own name as the slug.
-# <country>   <pbf-slug>
-brunei        malaysia-singapore-brunei
-malaysia      malaysia-singapore-brunei
-singapore     malaysia-singapore-brunei
+# <country>             <pbf-slug>
+brunei                  malaysia-singapore-brunei
+malaysia                malaysia-singapore-brunei
+singapore               malaysia-singapore-brunei
+israel                  israel-and-palestine
+saudi-arabia            gcc-states
+united-arab-emirates    gcc-states
+qatar                   gcc-states
+kuwait                  gcc-states
+bahrain                 gcc-states
+oman                    gcc-states
