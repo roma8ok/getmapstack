@@ -4,7 +4,11 @@ set -euo pipefail
 COUNTRY=""; COUNTRY_CODE=""
 DB_HOST=""; DB_PASSWORD=""; DB_USER="nominatim"; DB_NAME="nominatim"; DB_PORT="5432"
 ARTIFACTS_DIR="/artifacts"; WORK_DIR="/tmp/photon_build"; JAVA_HEAP="4g"
-LANGUAGES="en,de,fr,it,es,pt,ru,zh,ja,ko,ar,uk,pl,nl,sv,el,ca,he,fi,th,hi,fa,hu,ro,cs,sr,be,ga,lt,br,eu,oc,ka,kn,ur,ms,my,km,lo,tl,tr,az"
+# Every language whose name:<code> tag should reach the index. A code absent from this list
+# is silently not indexed: the importer looks up exactly these keys and drops the rest, so a
+# missing code costs the country its local-language names. Codes are taken verbatim - three
+# letter ones work the same way, which is how Tamazight (ber, zgh, kab, shi, tzm) gets in.
+LANGUAGES="en,de,fr,it,es,pt,ru,zh,ja,ko,ar,uk,pl,nl,sv,el,ca,he,fi,th,hi,fa,hu,ro,cs,sr,be,ga,lt,br,eu,oc,ka,kn,ur,ms,my,km,lo,tl,tr,az,af,am,sw,so,ha,yo,ig,zu,xh,st,tn,ts,ss,ve,nr,sn,ny,rw,rn,mg,wo,ff,ln,lg,om,ti,ee,ak,bm,sg,ber,zgh,kab,shi,tzm"
 
 usage() {
   echo "Usage: build-photon.sh --country <name> --country-code <cc> --db-host <host> --db-password <pw> \\"

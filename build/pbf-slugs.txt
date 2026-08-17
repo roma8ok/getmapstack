@@ -11,3 +11,10 @@ qatar                   gcc-states
 kuwait                  gcc-states
 bahrain                 gcc-states
 oman                    gcc-states
+eswatini                swaziland
+comoros                 comores
+cabo-verde              cape-verde
+congo                   congo-brazzaville
+dr-congo                congo-democratic-republic
+senegal                 senegal-and-gambia
+gambia                  senegal-and-gambia
