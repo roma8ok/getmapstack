@@ -84,7 +84,9 @@ case "$COUNTRY" in
   oman) CC="om" ;;
   pakistan) CC="pk" ;;
   philippines) CC="ph" ;;
+  portugal) CC="pt" ;;
   qatar) CC="qa" ;;
+  romania) CC="ro" ;;
   rwanda) CC="rw" ;;
   sao-tome-and-principe) CC="st" ;;
   saudi-arabia) CC="sa" ;;

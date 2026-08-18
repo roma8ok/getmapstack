@@ -117,8 +117,10 @@ Every other method is in [What you get](#what-you-get).
 | 🇴🇲 | Oman | 1.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/oman` |
 | 🇵🇰 | Pakistan | 0.9 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/pakistan` |
 | 🇵🇭 | Philippines | 1.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/philippines` |
+| 🇵🇹 | Portugal | 1.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/portugal` |
 | 🇶🇦 | Qatar | 1.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/qatar` |
 | 🇨🇬 | Republic of the Congo | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/congo` |
+| 🇷🇴 | Romania | 1.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/romania` |
 | 🇷🇼 | Rwanda | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/rwanda` |
 | 🇸🇹 | São Tomé and Príncipe | 0.3 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/sao-tome-and-principe` |
 | 🇸🇦 | Saudi Arabia | 1.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/saudi-arabia` |
