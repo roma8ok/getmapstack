@@ -122,6 +122,7 @@ export const COUNTRIES = [
   { name: "Turkmenistan", slug: "turkmenistan", center: [59.0, 39.0], zoom: 5.4 },
   { name: "Uganda", slug: "uganda", center: [32.29, 1.38], zoom: 6.6 },
   { name: "United Arab Emirates", slug: "united-arab-emirates", center: [54.3, 24.3], zoom: 6.8 },
+  { name: "United Kingdom", slug: "united-kingdom", center: [-3.5, 55.0], zoom: 5 },
   { name: "Uzbekistan", slug: "uzbekistan", center: [64.6, 41.4], zoom: 5.2 },
   { name: "Vietnam", slug: "vietnam", center: [107.0, 16.0], zoom: 5 },
   { name: "Zambia", slug: "zambia", center: [27.85, -13.18], zoom: 5.8 },

@@ -123,6 +123,7 @@ region.turkey = europe
 region.turkmenistan = asia
 region.uganda = africa
 region.united-arab-emirates = asia
+region.united-kingdom = europe
 region.uzbekistan = asia
 region.vietnam = asia
 region.zambia = africa

@@ -134,6 +134,7 @@ case "$COUNTRY" in
   turkmenistan) CC="tm" ;;
   uganda) CC="ug" ;;
   united-arab-emirates) CC="ae" ;;
+  united-kingdom) CC="gb" ;;
   uzbekistan) CC="uz" ;;
   vietnam) CC="vn" ;;
   zambia) CC="zm" ;;
@@ -145,6 +146,7 @@ esac
 : "${NOMI_SHARED_BUFFERS:=256MB}"
 : "${NOMI_MAINTENANCE_WORK_MEM:=512MB}"
 : "${NOMI_READY_ATTEMPTS:=900}"
+: "${NOMI_SHM_SIZE:=1g}"
 : "${PHOTON_HEAP:=4g}"
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -199,6 +201,7 @@ fi
 docker network create "$NET" >/dev/null 2>&1 || true
 docker rm -f "$NOMI" >/dev/null 2>&1 || true
 docker run -d --name "$NOMI" --network "$NET" \
+  --shm-size "$NOMI_SHM_SIZE" \
   -e PBF_PATH=/data.osm.pbf \
   -e IMPORT_WIKIPEDIA=true \
   -e FREEZE=true -e UPDATE_MODE=none \
