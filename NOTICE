@@ -43,3 +43,11 @@ Third-party software
   OSM Bright). Their license texts ship inside each image: see
   /usr/share/doc/getmapstack/THIRD_PARTY_LICENSES and
   /usr/share/doc/valhalla-deps/.
+
+  This repository additionally carries one of those design assets outside the
+  images: demo/isochrone-wave/src/styles/dark.json is a verbatim copy of the
+  OpenFreeMap Dark style from the same upstream project and under the same
+  terms - style code BSD 3-Clause, style design CC-BY 4.0, the fork's own
+  modifications MIT. It is adapted at runtime, not edited in place. Maps drawn
+  with it must carry the OpenMapTiles credit named above; the demo takes that
+  credit from the tile server's own TileJSON and renders it on the map.

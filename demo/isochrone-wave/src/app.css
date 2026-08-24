@@ -1,0 +1,135 @@
+:root {
+  --ink: #eaf1fb;
+  --muted: #93a5c0;
+  --page: #06090f;
+  --panel: rgba(10, 16, 28, 0.74);
+  --panel-border: rgba(130, 160, 210, 0.16);
+  --car: #46d4f5;
+  --bike: #f56ab0;
+  --walk: #ffc35c;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+html, body, #root { margin: 0; padding: 0; height: 100%; }
+body { background: var(--page); color: var(--ink); font-family: system-ui, sans-serif; }
+button { font-family: inherit; }
+
+.stage { position: relative; height: 100%; overflow: hidden; color: var(--ink); }
+/* The map is the only thing to click, so the cursor says so. MapLibre sets
+   cursor: grab on its own canvas container, and a descendant's cursor always
+   beats an ancestor's - so the crosshair has to be set there, or the pointer
+   advertises dragging over the page's only action. */
+.stage .map { position: absolute; inset: 0; cursor: crosshair; }
+.stage .map .maplibregl-canvas-container.maplibregl-interactive { cursor: crosshair; }
+.stage .map .maplibregl-canvas-container.maplibregl-interactive:active { cursor: grabbing; }
+
+/* The attribution disc and the panel it opens. MapLibre draws both white with
+   black text; on this basemap that reads as a lamp in the corner. The .stage
+   prefix is what outranks its own compact rules, not the file order. */
+.stage .maplibregl-ctrl-attrib.maplibregl-compact { background: rgba(10, 16, 28, 0.55); color: var(--muted); font-size: 11px; backdrop-filter: blur(6px); }
+/* MapLibre's own glyph is black on a white disc. Restated light rather than
+   inverted with a filter: filter repaints the focus ring too, and an inverted
+   #0096ff lands on orange. */
+.stage .maplibregl-ctrl-attrib-button { background-color: transparent; opacity: 0.5; background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23eaf1fb%22%20fill-rule%3D%22evenodd%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M4%2010a6%206%200%201%200%2012%200%206%206%200%201%200-12%200m5-3a1%201%200%201%200%202%200%201%201%200%201%200-2%200m0%203a1%201%200%201%201%202%200v3a1%201%200%201%201-2%200%22%2F%3E%3C%2Fsvg%3E"); }
+.stage .maplibregl-ctrl-attrib-button:hover { opacity: 0.9; }
+.stage .maplibregl-ctrl-attrib-button:focus { box-shadow: none; }
+.stage .maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-button { background-color: transparent; }
+.stage .maplibregl-ctrl-attrib a { color: var(--muted); }
+.stage .maplibregl-ctrl-attrib a:hover { color: var(--ink); }
+
+.brand { position: absolute; top: 22px; left: 24px; z-index: 2; display: inline-flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; font-size: clamp(24px, 3vw, 32px); font-weight: 700; letter-spacing: -0.01em; text-shadow: 0 1px 10px rgba(3, 6, 12, 0.6); }
+.brand svg { width: 0.85em; height: 0.85em; display: block; opacity: 0.85; }
+.brand:hover svg { opacity: 1; }
+.tagline { position: absolute; top: 62px; left: 24px; z-index: 2; margin: 0; font-size: 13px; color: var(--muted); text-shadow: 0 1px 10px rgba(3, 6, 12, 0.6); }
+/* Live mode's badge takes the tagline's slot: the country the connected
+   container serves is the one fact that changed. */
+.badge { position: absolute; top: 62px; left: 24px; z-index: 2; margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--car); text-shadow: 0 1px 10px rgba(3, 6, 12, 0.6); }
+
+.topright { position: absolute; top: 22px; right: 24px; display: flex; gap: 10px; align-items: center; z-index: 2; }
+.pill { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 99px; padding: 7px 14px; font-family: var(--mono); font-size: 12px; backdrop-filter: blur(6px); }
+.pill .dot { width: 7px; height: 7px; border-radius: 50%; background: #3ddc84; }
+.topright .cta { font-family: inherit; font-size: 12px; color: var(--car); background: rgba(70, 212, 245, 0.14); border: 1px solid rgba(70, 212, 245, 0.45); border-radius: 99px; padding: 8px 16px; cursor: pointer; }
+.topright .cta:hover { background: rgba(70, 212, 245, 0.22); }
+
+.run { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; background: rgba(6, 9, 15, 0.62); }
+.run .card { position: relative; width: min(520px, calc(100% - 40px)); background: var(--panel); border: 1px solid var(--panel-border); border-radius: 18px; padding: 26px 28px; display: flex; flex-direction: column; gap: 14px; backdrop-filter: blur(6px); }
+.run h2 { margin: 0; font-size: 22px; line-height: 1.15; }
+.run p { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 0; }
+.run .close { position: absolute; top: 12px; right: 14px; background: none; border: 0; color: var(--muted); font-size: 20px; cursor: pointer; }
+/* The command wraps rather than truncates: the cut-off word would be the one
+   word the visitor is meant to change. */
+.run .cmd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; background: rgba(140, 170, 220, 0.1); border-radius: 10px; padding: 10px 12px; font-family: var(--mono); font-size: 12.5px; }
+.run .cmd .copy { margin-left: auto; background: none; border: 0; color: var(--muted); font-size: 12px; cursor: pointer; }
+.run .picker { position: relative; display: inline-flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.run .picker .chip { font-family: var(--mono); font-size: 12.5px; color: var(--car); background: none; border: 0; border-bottom: 1px dashed currentColor; cursor: pointer; padding: 0; }
+.run .picker .chip .caret { width: 8px; height: 5px; margin-left: 5px; vertical-align: 0.18em; overflow: visible; }
+.run .picker .count { font-family: var(--sans, inherit); font-size: 12px; color: var(--muted); }
+.run .picker .list { position: absolute; top: 22px; left: 0; z-index: 4; width: min(320px, 70vw); background: rgba(10, 16, 28, 0.98); border: 1px solid var(--panel-border); border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.run .picker input[type='search'] { background: rgba(140, 170, 220, 0.08); border: 1px solid var(--panel-border); border-radius: 8px; color: var(--ink); font-family: var(--mono); font-size: 12.5px; padding: 7px 9px; }
+.run .picker ul { list-style: none; margin: 0; padding: 0; max-height: 210px; overflow-y: auto; }
+.run .picker li button { width: 100%; display: block; background: none; border: 0; color: var(--ink); font-size: 13px; text-align: left; padding: 7px 8px; border-radius: 8px; cursor: pointer; }
+.run .picker li button:hover { background: rgba(70, 212, 245, 0.14); }
+.run .picker .empty { font-size: 13px; color: var(--muted); padding: 6px 8px; }
+.run input[aria-label='Container address'] { background: rgba(140, 170, 220, 0.08); border: 1px solid var(--panel-border); border-radius: 10px; color: var(--ink); font-family: var(--mono); font-size: 13px; padding: 9px 12px; }
+/* Sits under the command, not next to the button: it is about the pull that has
+   to happen before connecting is even possible. */
+.run .note { font-size: 12.5px; }
+.run .row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.run .row .target { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.run .go { border: 1px solid transparent; background: var(--car); color: #061019; border-radius: 10px; padding: 10px 18px; font-size: 13px; font-weight: 500; cursor: pointer; }
+.run .go:disabled { opacity: 0.6; cursor: default; }
+.run .link { background: none; border: 0; color: var(--muted); font-size: 13px; text-decoration: underline; cursor: pointer; }
+.run .warn { color: var(--walk); font-size: 13px; }
+.run .status.error { color: #ff9d9d; font-size: 13px; }
+.run button:focus-visible, .run input:focus-visible { outline: 2px solid var(--car); outline-offset: 2px; }
+
+.dock { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); display: flex; flex-direction: column; gap: 10px; align-items: center; width: min(680px, calc(100% - 40px)); z-index: 2; }
+.tl { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; width: 100%; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 16px; padding: 12px 18px; backdrop-filter: blur(6px); }
+/* The city row is the dock's first line: a separate panel above the dock lands
+   on the wave itself, and two stacked panels weigh the screen down. */
+.tl .city { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; flex-basis: 100%; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; }
+.tl .city .name { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+.tl .city .sub { font-size: 12px; color: var(--muted); flex: 1; }
+/* Provenance travels with the city it belongs to. In a corner of the map it
+   was the first thing a narrow screen dropped, and a recorded wave that cannot
+   say it is recorded reads as live. */
+.tl .city .rec { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+.tl .city .shuffle { font-family: inherit; font-size: 12px; color: var(--muted); background: none; border: 1px solid var(--panel-border); border-radius: 99px; padding: 4px 12px; cursor: pointer; }
+.tl .city .shuffle:hover:not(:disabled) { color: var(--ink); }
+.tl .city .shuffle:disabled { opacity: 0.45; cursor: default; }
+/* Its own row: the title is what tells a first-time viewer what the three
+   colours on the map mean, and it needs the width to be read as a title. */
+.tl .legend { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 16px; flex-basis: 100%; padding-top: 2px; border-top: 1px solid var(--panel-border); }
+.tl .legend .title { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); white-space: nowrap; margin-right: 2px; }
+.tl .legend .key { display: flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
+/* Emoji carry their own colour - a bike glyph is near-black on this panel - so
+   each sits on a disc tinted with its wave colour: legible, and the colour is
+   what ties the key to the layer on the map. */
+.tl .legend .icon { display: grid; place-items: center; width: 21px; height: 21px; border-radius: 50%; background: color-mix(in srgb, currentColor 32%, transparent); font-size: 12.5px; line-height: 1; letter-spacing: 0; }
+.tl .play { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--panel-border); background: rgba(140, 170, 220, 0.12); color: var(--ink); cursor: pointer; display: grid; place-items: center; flex: none; }
+.tl .clock { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 26px; font-weight: 500; flex: none; min-width: 104px; }
+.tl .clock small { font-size: 11px; color: var(--muted); display: block; letter-spacing: 0.14em; text-transform: uppercase; }
+.tl input[type='range'] { flex: 1; accent-color: var(--ink); }
+/* Live, before the first click: the dock says what to do instead of offering a
+   transport for a recording that no longer exists. */
+.tl .hint { flex: 1; margin: 0; padding: 8px 0; text-align: center; font-size: 13px; color: var(--muted); }
+
+.wave-error { position: absolute; left: 50%; bottom: 110px; transform: translateX(-50%); background: var(--panel); border: 1px solid rgba(255, 130, 130, 0.4); border-radius: 14px; padding: 12px 18px; font-size: 13px; z-index: 2; }
+.wave-error button { margin-left: 12px; border: 0; background: none; color: var(--muted); cursor: pointer; }
+
+.origin-marker { width: 14px; height: 14px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 3px rgba(234, 241, 251, 0.25); }
+.origin-marker.loading { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 10px rgba(234, 241, 251, 0.08); } }
+@media (prefers-reduced-motion: reduce) { .origin-marker.loading { animation: none; } }
+
+.tl button:focus-visible, .brand:focus-visible,
+.stage .maplibregl-ctrl-attrib-button:focus-visible { outline: 2px solid var(--car); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+  /* The dock spans nearly the full width here, so at its usual 22px it lands on
+     the attribution disc MapLibre keeps at bottom right - and that disc is the
+     only way to the ODbL notice. Sitting higher clears it at any dock height. */
+  .dock { bottom: 44px; }
+  .tl .clock { font-size: 20px; min-width: 84px; }
+  .tl .legend { gap: 6px 12px; }
+  .tagline { display: none; }
+}

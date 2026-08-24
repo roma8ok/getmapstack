@@ -10,6 +10,9 @@
 
 Replace Google Maps API - no API keys, no rate limits, no vendor lock-in.
 
+**[Live demo](https://roma8ok.github.io/getmapstack/)** - a recorded 15-minute isochrone
+wave over three travel modes, then the `docker run` command to compute your own.
+
 Routing via [Valhalla](https://valhalla.github.io/valhalla/) 3.8.3, geocoding via
 [Photon](https://github.com/komoot/photon) 1.2.1, vector basemap tiles via
 [Martin 1.13.0](https://github.com/maplibre/martin) (built with
@@ -205,6 +208,7 @@ runs against a plain `docker run` of a country image, with no configuration.
 | Versions and how old the data is | [`GET /status`](#data-freshness) | `/valhalla`, `/photon` |
 | Liveness check for the map service | [`GET /health`](#data-freshness) | `/martin` |
 | Whether the container is ready to serve | [`GET /healthz`](#data-freshness) | the container |
+| Which country this image carries | [`GET /countries.json`](#data-freshness) | the container |
 
 Parameter-level reference for all three:
 [Valhalla API](https://valhalla.github.io/valhalla/api/turn-by-turn/api-reference/) ·
@@ -747,6 +751,10 @@ or has died. That is the probe to give a load balancer or an orchestrator, and t
 image's own healthcheck runs. The verdict is cached for about five seconds, so polling it
 costs the engines nothing.
 
+An image also names what it carries: `curl localhost:4326/countries.json` returns
+`{"countries":["cyprus"]}`. The explorer reads it to label itself, and it is the cheap way
+for anything pointed at an unknown container to find out which country answers there.
+
 ### Environment variables
 
 Everything the container publishes arrives through one process, and these are its knobs.
@@ -805,3 +813,5 @@ Code: [MIT](LICENSE). Map data: © [OpenStreetMap](https://www.openstreetmap.org
 The images embed OSM-derived databases (routing tiles, geocoding index, vector tiles) redistributed under ODbL 1.0 - see [NOTICE](NOTICE) for full attribution. If you publicly use routing or geocoding results from these images, credit OpenStreetMap: "© OpenStreetMap contributors" linked to [openstreetmap.org/copyright](https://www.openstreetmap.org/copyright).
 
 The basemap adds third-party design work: the tiles follow the [OpenMapTiles](https://openmaptiles.org/) schema (CC-BY 4.0), the style is [OpenFreeMap Bright](https://github.com/hyperknot/openfreemap-styles) - a fork of OpenMapTiles' OSM Bright, style code BSD-3-Clause, style design CC-BY 4.0, the fork's own changes MIT - with [Maki](https://github.com/mapbox/maki) icons under CC0 1.0 and [Noto](https://github.com/notofonts) fonts under OFL 1.1. Full license texts ship inside every image at `/usr/share/doc/getmapstack/THIRD_PARTY_LICENSES`.
+
+The demo in `demo/isochrone-wave/` carries a verbatim copy of the Dark style from that same project (`src/styles/dark.json`) under those same terms, adapted at runtime rather than edited. Maps drawn from these tiles must show visible credit: "© OpenMapTiles © OpenStreetMap contributors".

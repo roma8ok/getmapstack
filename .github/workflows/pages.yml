@@ -1,0 +1,47 @@
+name: Deploy demo to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # Only the canonical repository publishes the demo. A fork has no Pages
+    # site of its own, so the deploy step would fail there rather than do
+    # anything useful; fork the demo and this line is what you change.
+    if: github.repository == 'roma8ok/getmapstack'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: demo/isochrone-wave
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: demo/isochrone-wave/dist
+
+  deploy:
+    needs: build
+    if: github.repository == 'roma8ok/getmapstack'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

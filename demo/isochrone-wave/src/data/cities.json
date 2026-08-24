@@ -1,0 +1,16 @@
+[
+  { "slug": "limassol", "name": "Limassol", "label": "Cyprus", "country": "cyprus",
+    "origin": { "lat": 34.7071, "lon": 33.0226 } },
+  { "slug": "london", "name": "London", "label": "United Kingdom", "country": "united-kingdom",
+    "origin": { "lat": 51.5074, "lon": -0.1278 } },
+  { "slug": "amsterdam", "name": "Amsterdam", "label": "Netherlands", "country": "netherlands",
+    "origin": { "lat": 52.3728, "lon": 4.8936 } },
+  { "slug": "almaty", "name": "Almaty", "label": "Kazakhstan", "country": "kazakhstan",
+    "origin": { "lat": 43.238, "lon": 76.8829 } },
+  { "slug": "nairobi", "name": "Nairobi", "label": "Kenya", "country": "kenya",
+    "origin": { "lat": -1.2864, "lon": 36.8172 } },
+  { "slug": "seoul", "name": "Seoul", "label": "South Korea", "country": "south-korea",
+    "origin": { "lat": 37.5665, "lon": 126.978 } },
+  { "slug": "kuala-lumpur", "name": "Kuala Lumpur", "label": "Malaysia", "country": "malaysia",
+    "origin": { "lat": 3.139, "lon": 101.6869 } }
+]
