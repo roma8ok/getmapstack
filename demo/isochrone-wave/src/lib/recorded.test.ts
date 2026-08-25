@@ -29,9 +29,9 @@ const okFetch = (body: unknown) =>
 describe('loadRecording', () => {
   test('fetches under the base url and returns a WaveData', async () => {
     const f = okFetch(fixture());
-    const rec = await loadRecording('amsterdam', f, '/getmapstack/');
+    const rec = await loadRecording('amsterdam', f, '/getmapstack/demo/isochrone-wave/');
     expect((f as unknown as { mock: { calls: string[][] } }).mock.calls[0][0])
-      .toBe('/getmapstack/recorded/amsterdam.json');
+      .toBe('/getmapstack/demo/isochrone-wave/recorded/amsterdam.json');
     expect(rec.city).toBe('Amsterdam');
     expect(rec.origin).toEqual({ lat: 52.3728, lon: 4.8936 });
     expect(rec.wave.car).toHaveLength(15);

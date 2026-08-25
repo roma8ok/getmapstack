@@ -31,9 +31,20 @@ jobs:
           node-version: 22
       - run: npm ci
       - run: npm run build
+      # The demo answers under its own path and the root redirects to it, so
+      # the artifact is a tree rather than the build output alone. Note the
+      # split this step sits across: `working-directory` above applies to `run`
+      # steps only, while `path` below is an action input resolved from the
+      # workspace root. Read one of them as the other and the artifact is empty.
+      - name: Stage the site tree
+        working-directory: .
+        run: |
+          mkdir -p _site/demo/isochrone-wave
+          cp -R demo/isochrone-wave/dist/. _site/demo/isochrone-wave/
+          cp .github/pages-root/index.html _site/index.html
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: demo/isochrone-wave/dist
+          path: _site
 
   deploy:
     needs: build

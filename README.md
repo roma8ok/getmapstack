@@ -10,7 +10,7 @@
 
 Replace Google Maps API - no API keys, no rate limits, no vendor lock-in.
 
-**[Live demo](https://roma8ok.github.io/getmapstack/)** - a recorded 15-minute isochrone
+**[Live demo](https://roma8ok.github.io/getmapstack/demo/isochrone-wave/)** - a recorded 15-minute isochrone
 wave over three travel modes, then the `docker run` command to compute your own.
 
 Routing via [Valhalla](https://valhalla.github.io/valhalla/) 3.8.3, geocoding via

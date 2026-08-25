@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- The demo answered here first, and that address shipped in the README.
+         Pages cannot be told to serve a 301, so this page is the redirect: an
+         instant refresh for browsers, a canonical for crawlers, and the link
+         itself in the body for anything that executes neither. The refresh and
+         the link are relative, so a fork under another name still lands
+         somewhere real; a canonical has to be absolute. -->
+    <meta http-equiv="refresh" content="0; url=demo/isochrone-wave/" />
+    <link rel="canonical" href="https://roma8ok.github.io/getmapstack/demo/isochrone-wave/" />
+    <!-- A fourth audience, and the reason this stub is not three lines long:
+         the bots that build link previews. They read these tags off whatever
+         URL they were handed, execute no JavaScript and do not follow a meta
+         refresh - so a stub without them turns every link to this address that
+         is already out in the world into a blank card. The card therefore
+         repeats the demo's own, pointing at where the demo now lives. Keep
+         these byte-identical to demo/isochrone-wave/index.html. -->
+    <title>How far can 15 minutes take you?</title>
+    <meta name="description" content="Self-hosted mapping stack. One command per country." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://roma8ok.github.io/getmapstack/demo/isochrone-wave/" />
+    <meta property="og:title" content="How far can 15 minutes take you?" />
+    <meta
+      property="og:description"
+      content="Self-hosted mapping stack. One command per country."
+    />
+    <meta property="og:image" content="https://roma8ok.github.io/getmapstack/demo/isochrone-wave/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="A dark map of Seoul with three isochrone waves drawn over it - car, bicycle and on foot - showing how far 15 minutes reaches by each."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <style>
+      html {
+        color-scheme: dark;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #06090f;
+        color: #e8edf5;
+        font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      a {
+        color: #46d4f5;
+      }
+    </style>
+  </head>
+  <body>
+    <p>The demo moved to <a href="demo/isochrone-wave/">demo/isochrone-wave/</a>.</p>
+  </body>
+</html>
