@@ -143,7 +143,7 @@ VALHALLA_CONCURRENCY ?=
 # Target platforms for server images; override for single-arch dev builds (e.g. PLATFORMS=linux/arm64)
 PLATFORMS ?= linux/amd64,linux/arm64
 
-.PHONY: build-valhalla-builder create-valhalla-tiles build-photon-builder create-photon-data build-planetiler-builder create-vector-tiles build-server test-gateway fetch-osm update-bright-style help
+.PHONY: build-valhalla-builder create-valhalla-tiles build-photon-builder create-photon-data build-planetiler-builder create-vector-tiles build-server test-gateway fetch-osm update-bright-style clean-artifacts help
 
 build-valhalla-builder:
 	cp build/pbf-slugs.txt build/valhalla/pbf-slugs.txt
@@ -221,6 +221,12 @@ endif
 test-gateway:
 	cd build/server/gateway && go test ./... -count=1
 
+# Reclaim space in artifacts/. Lists by default; CONFIRM=1 deletes. KEEP= protects
+# countries, ONLY= restricts to them. The OSM download cache and the shared Planetiler
+# cache are never touched.
+clean-artifacts:
+	@KEEP="$(KEEP)" ONLY="$(ONLY)" CONFIRM="$(CONFIRM)" ./build/clean-artifacts.sh
+
 # Diff the vendored map style template against upstream, patched the same way. BRIGHT_REF
 # defaults to the commit pinned in the server Dockerfile; pass BRIGHT_REF=main to see what
 # upstream has changed since. Prints a diff and the tarball checksum - updating the pin
@@ -261,6 +267,12 @@ help::
 	@echo "  Map style:"
 	@echo "  make update-bright-style                      Diff the vendored map style against upstream"
 	@echo "  ... BRIGHT_REF=main                           Compare against another upstream ref (default: the pinned commit)"
+	@echo ""
+	@echo "  Housekeeping:"
+	@echo "  make clean-artifacts                          List reclaimable build artifacts"
+	@echo "  ... CONFIRM=1                                 Delete them"
+	@echo "  ... KEEP=cyprus                               Protect a country (space-separated list)"
+	@echo "  ... ONLY=cyprus                               Restrict to a country (space-separated list)"
 	@echo ""
 	@echo "  make help                                     Show this help"
 	@echo ""

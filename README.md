@@ -804,7 +804,7 @@ make build-server COUNTRY=cyprus
 docker run -p 4326:4326 getmapstack/cyprus
 ```
 
-`fetch-osm` pins one OSM snapshot so all three builders work from the same download. Intermediate artifacts (routing tiles, geocoding index, vector tiles) land in `artifacts/`. Images build for linux/amd64 and linux/arm64 by default - pass `PLATFORMS=linux/arm64` (or your platform) for a faster single-arch build. `make help` lists all targets and available countries.
+`fetch-osm` pins one OSM snapshot so all three builders work from the same download. Intermediate artifacts (routing tiles, geocoding index, vector tiles) land in `artifacts/`. `make clean-artifacts` lists what can be reclaimed there and deletes it with `CONFIRM=1`, leaving the OSM download cache in place. Images build for linux/amd64 and linux/arm64 by default - pass `PLATFORMS=linux/arm64` (or your platform) for a faster single-arch build. `make help` lists all targets and available countries.
 
 ## License
 
