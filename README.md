@@ -60,6 +60,7 @@ Every other method is in [What you get](#what-you-get).
 | 🇦🇩 | Andorra | 0.3 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/andorra` |
 | 🇦🇴 | Angola | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/angola` |
 | 🇦🇲 | Armenia | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/armenia` |
+| 🇦🇺 | Australia | 4.1 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/australia` |
 | 🇦🇹 | Austria | 2.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/austria` |
 | 🇦🇿 | Azerbaijan | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/azerbaijan` |
 | 🇧🇭 | Bahrain | 1.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/bahrain` |
@@ -83,6 +84,7 @@ Every other method is in [What you get](#what-you-get).
 | 🇭🇷 | Croatia | 0.8 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/croatia` |
 | 🇨🇾 | Cyprus | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/cyprus` |
 | 🇨🇿 | Czech Republic | 2.2 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/czech-republic` |
+| 🇩🇰 | Denmark | 1.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/denmark` |
 | 🇩🇯 | Djibouti | 0.3 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/djibouti` |
 | 🇨🇩 | DR Congo | 0.9 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/dr-congo` |
 | 🇪🇬 | Egypt | 2.2 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/egypt` |
@@ -91,6 +93,8 @@ Every other method is in [What you get](#what-you-get).
 | 🇪🇪 | Estonia | 0.9 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/estonia` |
 | 🇸🇿 | Eswatini | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/eswatini` |
 | 🇪🇹 | Ethiopia | 0.6 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/ethiopia` |
+| 🇫🇯 | Fiji | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/fiji` |
+| 🇫🇮 | Finland | 2.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/finland` |
 | 🇬🇦 | Gabon | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/gabon` |
 | 🇬🇲 | Gambia | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/gambia` |
 | 🇬🇪 | Georgia | 0.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/georgia` |
@@ -104,9 +108,12 @@ Every other method is in [What you get](#what-you-get).
 | 🇮🇶 | Iraq | 0.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/iraq` |
 | 🇮🇪 | Ireland | 1.2 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/ireland` |
 | 🇮🇱 | Israel | 0.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/israel` |
+| 🇮🇹 | Italy | 5.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/italy` |
+| 🇯🇵 | Japan | 5.6 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/japan` |
 | 🇯🇴 | Jordan | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/jordan` |
 | 🇰🇿 | Kazakhstan | 1.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/kazakhstan` |
 | 🇰🇪 | Kenya | 0.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/kenya` |
+| 🇰🇮 | Kiribati | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/kiribati` |
 | 🇰🇼 | Kuwait | 1.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/kuwait` |
 | 🇰🇬 | Kyrgyzstan | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/kyrgyzstan` |
 | 🇱🇦 | Laos | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/laos` |
@@ -124,8 +131,10 @@ Every other method is in [What you get](#what-you-get).
 | 🇲🇻 | Maldives | 0.3 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/maldives` |
 | 🇲🇱 | Mali | 0.6 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/mali` |
 | 🇲🇹 | Malta | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/malta` |
+| 🇲🇭 | Marshall Islands | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/marshall-islands` |
 | 🇲🇷 | Mauritania | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/mauritania` |
 | 🇲🇺 | Mauritius | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/mauritius` |
+| 🇫🇲 | Micronesia | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/micronesia` |
 | 🇲🇩 | Moldova | 0.9 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/moldova` |
 | 🇲🇨 | Monaco | 0.3 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/monaco` |
 | 🇲🇳 | Mongolia | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/mongolia` |
@@ -133,19 +142,26 @@ Every other method is in [What you get](#what-you-get).
 | 🇲🇦 | Morocco | 0.8 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/morocco` |
 | 🇲🇿 | Mozambique | 0.6 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/mozambique` |
 | 🇳🇦 | Namibia | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/namibia` |
+| 🇳🇷 | Nauru | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/nauru` |
 | 🇳🇵 | Nepal | 0.8 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/nepal` |
 | 🇳🇱 | Netherlands | 4.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/netherlands` |
+| 🇳🇿 | New Zealand | 2.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/new-zealand` |
 | 🇳🇪 | Niger | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/niger` |
 | 🇳🇬 | Nigeria | 1.1 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/nigeria` |
 | 🇲🇰 | North Macedonia | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/north-macedonia` |
+| 🇳🇴 | Norway | 3.6 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/norway` |
 | 🇴🇲 | Oman | 1.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/oman` |
 | 🇵🇰 | Pakistan | 0.9 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/pakistan` |
+| 🇵🇼 | Palau | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/palau` |
+| 🇵🇬 | Papua New Guinea | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/papua-new-guinea` |
 | 🇵🇭 | Philippines | 1.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/philippines` |
+| 🇵🇱 | Poland | 7.1 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/poland` |
 | 🇵🇹 | Portugal | 1.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/portugal` |
 | 🇶🇦 | Qatar | 1.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/qatar` |
 | 🇨🇬 | Republic of the Congo | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/congo` |
 | 🇷🇴 | Romania | 1.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/romania` |
 | 🇷🇼 | Rwanda | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/rwanda` |
+| 🇼🇸 | Samoa | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/samoa` |
 | 🇸🇹 | São Tomé and Príncipe | 0.3 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/sao-tome-and-principe` |
 | 🇸🇦 | Saudi Arabia | 1.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/saudi-arabia` |
 | 🇸🇳 | Senegal | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/senegal` |
@@ -155,25 +171,31 @@ Every other method is in [What you get](#what-you-get).
 | 🇸🇬 | Singapore | 0.9 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/singapore` |
 | 🇸🇰 | Slovakia | 1.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/slovakia` |
 | 🇸🇮 | Slovenia | 0.8 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/slovenia` |
+| 🇸🇧 | Solomon Islands | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/solomon-islands` |
 | 🇸🇴 | Somalia | 0.6 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/somalia` |
 | 🇿🇦 | South Africa | 1.3 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/south-africa` |
 | 🇰🇷 | South Korea | 1.9 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/south-korea` |
 | 🇸🇸 | South Sudan | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/south-sudan` |
+| 🇪🇸 | Spain | 4.6 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/spain` |
 | 🇱🇰 | Sri Lanka | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/sri-lanka` |
 | 🇸🇩 | Sudan | 0.6 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/sudan` |
+| 🇸🇪 | Sweden | 3.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/sweden` |
 | 🇨🇭 | Switzerland | 2.2 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/switzerland` |
 | 🇹🇯 | Tajikistan | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/tajikistan` |
 | 🇹🇿 | Tanzania | 1.2 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/tanzania` |
 | 🇹🇭 | Thailand | 1.3 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/thailand` |
 | 🇹🇱 | Timor-Leste | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/east-timor` |
 | 🇹🇬 | Togo | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/togo` |
+| 🇹🇴 | Tonga | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/tonga` |
 | 🇹🇳 | Tunisia | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/tunisia` |
 | 🇹🇷 | Turkey | 2.0 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/turkey` |
 | 🇹🇲 | Turkmenistan | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/turkmenistan` |
+| 🇹🇻 | Tuvalu | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/tuvalu` |
 | 🇺🇬 | Uganda | 0.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/uganda` |
 | 🇦🇪 | United Arab Emirates | 1.1 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/united-arab-emirates` |
 | 🇬🇧 | United Kingdom | 7.3 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/united-kingdom` |
 | 🇺🇿 | Uzbekistan | 0.8 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/uzbekistan` |
+| 🇻🇺 | Vanuatu | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/vanuatu` |
 | 🇻🇳 | Vietnam | 1.2 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/vietnam` |
 | 🇿🇲 | Zambia | 0.6 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/zambia` |
 | 🇿🇼 | Zimbabwe | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/zimbabwe` |

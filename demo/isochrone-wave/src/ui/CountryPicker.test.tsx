@@ -20,7 +20,9 @@ describe('CountryPicker', () => {
   test('shows the selected country and the catalog size', () => {
     render(<Picker value="netherlands" />);
     expect(screen.getByRole('button', { name: /netherlands/i })).toBeTruthy();
-    expect(screen.getByText(/12[0-9] countries/)).toBeTruthy();
+    // Derived from the catalog, not written out: a hard-coded count turns every
+    // country addition into a failing test that says nothing about the picker.
+    expect(screen.getByText(new RegExp(`${ALL.length} countries`))).toBeTruthy();
   });
 
   test('filters by typed text and reports the chosen slug', () => {

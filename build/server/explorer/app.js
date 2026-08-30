@@ -117,11 +117,22 @@ async function main() {
     fetchManifest(),
   ]);
 
+  const available = availableCountries(manifest, tilejson.bounds);
+
+  // An extract crossing the antimeridian reports bounds spanning the whole globe - Fiji,
+  // Kiribati, Tuvalu and New Zealand all do - and fitting those opens the map over the
+  // Atlantic at world zoom with the country sliced down both edges. Where the image names
+  // exactly one country we already know which one it is, so its own centre and zoom win.
+  // Several countries still fit the bounds: that is the only view showing all of them.
+  const view =
+    available.length === 1
+      ? { center: available[0].center, zoom: available[0].zoom }
+      : { bounds: tilejson.bounds, fitBoundsOptions: { padding: 24 } };
+
   map = new maplibregl.Map({
     container: "map",
     style,
-    bounds: tilejson.bounds,
-    fitBoundsOptions: { padding: 24 },
+    ...view,
     attributionControl: { compact: false },
   });
   map.addControl(new maplibregl.NavigationControl(), "top-right");
@@ -131,7 +142,6 @@ async function main() {
   // several countries. Named countrySelect, not select: the tool framework defines a
   // select() function.
   countrySelect = document.getElementById("country");
-  const available = availableCountries(manifest, tilejson.bounds);
   if (available.length > 1) {
     countrySelect.hidden = false;
     countrySelect.innerHTML = available

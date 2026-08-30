@@ -7,8 +7,13 @@ ARTIFACTS_DIR="/artifacts"; WORK_DIR="/tmp/photon_build"; JAVA_HEAP="4g"
 # Every language whose name:<code> tag should reach the index. A code absent from this list
 # is silently not indexed: the importer looks up exactly these keys and drops the rest, so a
 # missing code costs the country its local-language names. Codes are taken verbatim - three
-# letter ones work the same way, which is how Tamazight (ber, zgh, kab, shi, tzm) gets in.
-LANGUAGES="en,de,fr,it,es,pt,ru,zh,ja,ko,ar,uk,pl,nl,sv,el,ca,he,fi,th,hi,fa,hu,ro,cs,sr,be,ga,lt,br,eu,oc,ka,kn,ur,ms,my,km,lo,tl,tr,az,af,am,sw,so,ha,yo,ig,zu,xh,st,tn,ts,ss,ve,nr,sn,ny,rw,rn,mg,wo,ff,ln,lg,om,ti,ee,ak,bm,sg,sq,mk,bs,hr,sl,bg,sk,et,lv,lb,mt,rm,fy,cy,gd,kw,ber,zgh,kab,shi,tzm"
+# letter ones work the same way, which is how Tamazight (ber, zgh, kab, shi, tzm) and the
+# Sami group (se, sma, smj, sju) get in. The list is checked against per-region tag counts
+# rather than guessed - name:se alone carries 13,951 tags in Norway and name:mi 53,701 in
+# New Zealand. A handful of Pacific national languages (tvl, ho, pon, yap, kos) carry no
+# tags yet and are listed anyway, so the first country that maps them is not silently
+# dropped the way az was for Azerbaijan.
+LANGUAGES="en,de,fr,it,es,pt,ru,zh,ja,ko,ar,uk,pl,nl,sv,el,ca,he,fi,th,hi,fa,hu,ro,cs,sr,be,ga,lt,br,eu,oc,ka,kn,ur,ms,my,km,lo,tl,tr,az,af,am,sw,so,ha,yo,ig,zu,xh,st,tn,ts,ss,ve,nr,sn,ny,rw,rn,mg,wo,ff,ln,lg,om,ti,ee,ak,bm,sg,sq,mk,bs,hr,sl,bg,sk,et,lv,lb,mt,rm,fy,cy,gd,kw,ber,zgh,kab,shi,tzm,da,no,se,sma,smj,sju,fkv,fit,gl,ast,fur,lld,mi,mh,sm,bi,tpi,fj,gil,na,pau,to,chk,tvl,ho,pon,yap,kos"
 
 usage() {
   echo "Usage: build-photon.sh --country <name> --country-code <cc> --db-host <host> --db-password <pw> \\"
