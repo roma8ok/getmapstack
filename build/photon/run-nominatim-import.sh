@@ -21,17 +21,22 @@ case "$COUNTRY" in
   algeria) CC="dz" ;;
   andorra) CC="ad" ;;
   angola) CC="ao" ;;
+  argentina) CC="ar" ;;
   armenia) CC="am" ;;
   australia) CC="au" ;;
   austria) CC="at" ;;
   azerbaijan) CC="az" ;;
+  bahamas) CC="bs" ;;
   bahrain) CC="bh" ;;
   bangladesh) CC="bd" ;;
   belgium) CC="be" ;;
+  belize) CC="bz" ;;
   benin) CC="bj" ;;
   bhutan) CC="bt" ;;
+  bolivia) CC="bo" ;;
   bosnia-herzegovina) CC="ba" ;;
   botswana) CC="bw" ;;
+  brazil) CC="br" ;;
   brunei) CC="bn" ;;
   bulgaria) CC="bg" ;;
   burkina-faso) CC="bf" ;;
@@ -41,16 +46,23 @@ case "$COUNTRY" in
   cameroon) CC="cm" ;;
   central-african-republic) CC="cf" ;;
   chad) CC="td" ;;
+  chile) CC="cl" ;;
+  china) CC="cn" ;;
+  colombia) CC="co" ;;
   comoros) CC="km" ;;
   congo) CC="cg" ;;
+  costa-rica) CC="cr" ;;
   croatia) CC="hr" ;;
   cyprus) CC="cy" ;;
   czech-republic) CC="cz" ;;
   denmark) CC="dk" ;;
   djibouti) CC="dj" ;;
+  dominican-republic) CC="do" ;;
   dr-congo) CC="cd" ;;
   east-timor) CC="tl" ;;
+  ecuador) CC="ec" ;;
   egypt) CC="eg" ;;
+  el-salvador) CC="sv" ;;
   equatorial-guinea) CC="gq" ;;
   eritrea) CC="er" ;;
   estonia) CC="ee" ;;
@@ -63,9 +75,14 @@ case "$COUNTRY" in
   georgia) CC="ge" ;;
   ghana) CC="gh" ;;
   greece) CC="gr" ;;
+  guatemala) CC="gt" ;;
   guinea) CC="gn" ;;
   guinea-bissau) CC="gw" ;;
+  guyana) CC="gy" ;;
+  haiti) CC="ht" ;;
+  honduras) CC="hn" ;;
   hungary) CC="hu" ;;
+  iceland) CC="is" ;;
   india) CC="in" ;;
   indonesia) CC="id" ;;
   iraq) CC="iq" ;;
@@ -73,6 +90,7 @@ case "$COUNTRY" in
   israel) CC="il" ;;
   italy) CC="it" ;;
   ivory-coast) CC="ci" ;;
+  jamaica) CC="jm" ;;
   japan) CC="jp" ;;
   jordan) CC="jo" ;;
   kazakhstan) CC="kz" ;;
@@ -98,6 +116,7 @@ case "$COUNTRY" in
   marshall-islands) CC="mh" ;;
   mauritania) CC="mr" ;;
   mauritius) CC="mu" ;;
+  mexico) CC="mx" ;;
   micronesia) CC="fm" ;;
   moldova) CC="md" ;;
   monaco) CC="mc" ;;
@@ -110,6 +129,7 @@ case "$COUNTRY" in
   nepal) CC="np" ;;
   netherlands) CC="nl" ;;
   new-zealand) CC="nz" ;;
+  nicaragua) CC="ni" ;;
   niger) CC="ne" ;;
   nigeria) CC="ng" ;;
   north-macedonia) CC="mk" ;;
@@ -117,7 +137,10 @@ case "$COUNTRY" in
   oman) CC="om" ;;
   pakistan) CC="pk" ;;
   palau) CC="pw" ;;
+  panama) CC="pa" ;;
   papua-new-guinea) CC="pg" ;;
+  paraguay) CC="py" ;;
+  peru) CC="pe" ;;
   philippines) CC="ph" ;;
   poland) CC="pl" ;;
   portugal) CC="pt" ;;
@@ -142,6 +165,7 @@ case "$COUNTRY" in
   spain) CC="es" ;;
   sri-lanka) CC="lk" ;;
   sudan) CC="sd" ;;
+  suriname) CC="sr" ;;
   sweden) CC="se" ;;
   switzerland) CC="ch" ;;
   tajikistan) CC="tj" ;;
@@ -156,8 +180,10 @@ case "$COUNTRY" in
   uganda) CC="ug" ;;
   united-arab-emirates) CC="ae" ;;
   united-kingdom) CC="gb" ;;
+  uruguay) CC="uy" ;;
   uzbekistan) CC="uz" ;;
   vanuatu) CC="vu" ;;
+  venezuela) CC="ve" ;;
   vietnam) CC="vn" ;;
   zambia) CC="zm" ;;
   zimbabwe) CC="zw" ;;
@@ -208,14 +234,14 @@ else
   rm -f "$DATE_FILE"
   echo "Ensuring PBF is fresh: $PBF_SLUG"
   if [[ -f "$PBF_FILE" ]]; then
-    HTTP_CODE=$(curl -L --fail --progress-bar --remove-on-error --retry 3 -R -z "$PBF_FILE" -o "$PBF_FILE" -w '%{response_code}' "$PBF_URL")
+    HTTP_CODE=$(curl -L --fail --progress-bar --remove-on-error --retry 10 --retry-delay 30 --retry-max-time 900 -R -z "$PBF_FILE" -o "$PBF_FILE" -w '%{response_code}' "$PBF_URL")
     if [[ "$HTTP_CODE" == "304" ]]; then
       echo "PBF up to date, reusing cached copy (HTTP 304)"
     else
       echo "PBF refreshed (HTTP $HTTP_CODE)"
     fi
   else
-    curl -L --fail --progress-bar --remove-on-error --retry 3 -R -o "$PBF_FILE" "$PBF_URL"
+    curl -L --fail --progress-bar --remove-on-error --retry 10 --retry-delay 30 --retry-max-time 900 -R -o "$PBF_FILE" "$PBF_URL"
   fi
 fi
 

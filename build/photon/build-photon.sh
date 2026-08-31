@@ -13,7 +13,12 @@ ARTIFACTS_DIR="/artifacts"; WORK_DIR="/tmp/photon_build"; JAVA_HEAP="4g"
 # New Zealand. A handful of Pacific national languages (tvl, ho, pon, yap, kos) carry no
 # tags yet and are listed anyway, so the first country that maps them is not silently
 # dropped the way az was for Azerbaijan.
-LANGUAGES="en,de,fr,it,es,pt,ru,zh,ja,ko,ar,uk,pl,nl,sv,el,ca,he,fi,th,hi,fa,hu,ro,cs,sr,be,ga,lt,br,eu,oc,ka,kn,ur,ms,my,km,lo,tl,tr,az,af,am,sw,so,ha,yo,ig,zu,xh,st,tn,ts,ss,ve,nr,sn,ny,rw,rn,mg,wo,ff,ln,lg,om,ti,ee,ak,bm,sg,sq,mk,bs,hr,sl,bg,sk,et,lv,lb,mt,rm,fy,cy,gd,kw,ber,zgh,kab,shi,tzm,da,no,se,sma,smj,sju,fkv,fit,gl,ast,fur,lld,mi,mh,sm,bi,tpi,fj,gil,na,pau,to,chk,tvl,ho,pon,yap,kos"
+# The Americas/Iceland/China pass added is, ht, qu, ay, gn, srn, yue, bo, ug, mn and za, each
+# confirmed against taginfo first (ug 20,146 tags, yue 15,337, mn 15,033, bo 12,115, is 3,913,
+# gn 1,935, qu 1,927, ht 1,711, za 731, ay 569, srn 120). mn was the one already owed: Mongolia
+# shipped before it was listed, so that image carries no name:mn at all and only picks the
+# translations up on a rebuild - the same failure az had, caught late again.
+LANGUAGES="en,de,fr,it,es,pt,ru,zh,ja,ko,ar,uk,pl,nl,sv,el,ca,he,fi,th,hi,fa,hu,ro,cs,sr,be,ga,lt,br,eu,oc,ka,kn,ur,ms,my,km,lo,tl,tr,az,af,am,sw,so,ha,yo,ig,zu,xh,st,tn,ts,ss,ve,nr,sn,ny,rw,rn,mg,wo,ff,ln,lg,om,ti,ee,ak,bm,sg,sq,mk,bs,hr,sl,bg,sk,et,lv,lb,mt,rm,fy,cy,gd,kw,ber,zgh,kab,shi,tzm,da,no,se,sma,smj,sju,fkv,fit,gl,ast,fur,lld,mi,mh,sm,bi,tpi,fj,gil,na,pau,to,chk,tvl,ho,pon,yap,kos,is,ht,qu,ay,gn,srn,yue,bo,ug,mn,za"
 
 usage() {
   echo "Usage: build-photon.sh --country <name> --country-code <cc> --db-host <host> --db-password <pw> \\"

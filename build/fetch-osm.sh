@@ -45,16 +45,25 @@ rm -f "$DATE_FILE"
 HEADER_FILE=$(mktemp)
 trap 'rm -f "$HEADER_FILE"' EXIT
 
+# Geofabrik sits behind a caching proxy that returns 502/503 in bursts lasting minutes, not
+# seconds. curl's default backoff doubles from one second, so `--retry 3` gives up after
+# about seven seconds - enough for a blip, nowhere near enough for the real thing, and the
+# whole batch build dies at whichever country happened to ask during the burst. A fixed
+# 30-second spacing bounded at fifteen minutes rides the burst out instead. Only transient
+# failures are retried (curl's default set: 408, 429, 5xx and connection errors), so a real
+# 404 from a wrong slug still fails immediately rather than costing fifteen minutes.
+RETRY_OPTS=(--retry 10 --retry-delay 30 --retry-max-time 900)
+
 echo "=== Fetching OSM extract: ${PBF_SLUG} ==="
 if [[ -f "$PBF_FILE" ]]; then
-  HTTP_CODE=$(curl -L --fail --progress-bar --remove-on-error --retry 3 -R -z "$PBF_FILE" -o "$PBF_FILE" -D "$HEADER_FILE" -w '%{response_code}' "$PBF_URL")
+  HTTP_CODE=$(curl -L --fail --progress-bar --remove-on-error "${RETRY_OPTS[@]}" -R -z "$PBF_FILE" -o "$PBF_FILE" -D "$HEADER_FILE" -w '%{response_code}' "$PBF_URL")
   if [[ "$HTTP_CODE" == "304" ]]; then
     echo "PBF up to date, reusing cached copy (HTTP 304)"
   else
     echo "PBF refreshed (HTTP ${HTTP_CODE})"
   fi
 else
-  curl -L --fail --progress-bar --remove-on-error --retry 3 -R -o "$PBF_FILE" -D "$HEADER_FILE" "$PBF_URL"
+  curl -L --fail --progress-bar --remove-on-error "${RETRY_OPTS[@]}" -R -o "$PBF_FILE" -D "$HEADER_FILE" "$PBF_URL"
 fi
 
 # -L dumps the 302 block as well as the final one, hence tail -1. The `|| true` keeps

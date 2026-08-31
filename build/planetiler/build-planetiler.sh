@@ -63,14 +63,14 @@ else
   # alongside the bytes it describes.
   rm -f "${DATE_FILE}"
   if [[ -f "${PBF_FILE}" ]]; then
-    HTTP_CODE=$(curl -L --fail --progress-bar --remove-on-error --retry 3 -R -z "${PBF_FILE}" -o "${PBF_FILE}" -w '%{response_code}' "${PBF_URL}")
+    HTTP_CODE=$(curl -L --fail --progress-bar --remove-on-error --retry 10 --retry-delay 30 --retry-max-time 900 -R -z "${PBF_FILE}" -o "${PBF_FILE}" -w '%{response_code}' "${PBF_URL}")
     if [[ "${HTTP_CODE}" == "304" ]]; then
       echo "PBF up to date, reusing cached copy (HTTP 304)"
     else
       echo "PBF refreshed (HTTP ${HTTP_CODE})"
     fi
   else
-    curl -L --fail --progress-bar --remove-on-error --retry 3 -R -o "${PBF_FILE}" "${PBF_URL}"
+    curl -L --fail --progress-bar --remove-on-error --retry 10 --retry-delay 30 --retry-max-time 900 -R -o "${PBF_FILE}" "${PBF_URL}"
   fi
 fi
 echo "PBF size: $(du -h "${PBF_FILE}" | cut -f1)"
