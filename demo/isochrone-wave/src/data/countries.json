@@ -52,6 +52,10 @@
     "slug": "bangladesh"
   },
   {
+    "name": "Belarus",
+    "slug": "belarus"
+  },
+  {
     "name": "Belgium",
     "slug": "belgium"
   },
@@ -110,6 +114,10 @@
   {
     "name": "Cameroon",
     "slug": "cameroon"
+  },
+  {
+    "name": "Canada",
+    "slug": "canada"
   },
   {
     "name": "Central African Republic",
@@ -216,6 +224,10 @@
     "slug": "finland"
   },
   {
+    "name": "France",
+    "slug": "france"
+  },
+  {
     "name": "Gabon",
     "slug": "gabon"
   },
@@ -226,6 +238,10 @@
   {
     "name": "Georgia",
     "slug": "georgia"
+  },
+  {
+    "name": "Germany",
+    "slug": "germany"
   },
   {
     "name": "Ghana",
@@ -520,6 +536,10 @@
     "slug": "romania"
   },
   {
+    "name": "Russia",
+    "slug": "russia"
+  },
+  {
     "name": "Rwanda",
     "slug": "rwanda"
   },
@@ -646,6 +666,10 @@
   {
     "name": "Uganda",
     "slug": "uganda"
+  },
+  {
+    "name": "Ukraine",
+    "slug": "ukraine"
   },
   {
     "name": "United Arab Emirates",

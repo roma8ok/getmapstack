@@ -18,6 +18,7 @@ region.azerbaijan = asia
 region.bahamas = central-america
 region.bahrain = asia
 region.bangladesh = asia
+region.belarus = europe
 region.belgium = europe
 region.belize = central-america
 region.benin = africa
@@ -32,6 +33,7 @@ region.burkina-faso = africa
 region.burundi = africa
 region.cabo-verde = africa
 region.cambodia = asia
+region.canada = north-america
 region.cameroon = africa
 region.central-african-republic = africa
 region.chad = africa
@@ -59,9 +61,11 @@ region.eswatini = africa
 region.ethiopia = africa
 region.fiji = australia-oceania
 region.finland = europe
+region.france = europe
 region.gabon = africa
 region.gambia = africa
 region.georgia = europe
+region.germany = europe
 region.ghana = africa
 region.greece = europe
 region.guatemala = central-america
@@ -135,6 +139,7 @@ region.poland = europe
 region.portugal = europe
 region.qatar = asia
 region.romania = europe
+region.russia = root
 region.rwanda = africa
 region.samoa = australia-oceania
 region.sao-tome-and-principe = africa
@@ -167,6 +172,7 @@ region.turkey = europe
 region.turkmenistan = asia
 region.tuvalu = australia-oceania
 region.uganda = africa
+region.ukraine = europe
 region.united-arab-emirates = asia
 region.united-kingdom = europe
 region.uruguay = south-america
@@ -262,6 +268,7 @@ endif
 	cp artifacts/photon-$(COUNTRY).tar build/server/photon-data.tar
 	cp artifacts/tiles-$(COUNTRY).pmtiles build/server/tiles.pmtiles
 	jq -n --args '{countries: $$ARGS.positional}' "$(COUNTRY)" > build/server/explorer-countries.json
+	./build/server/check-artifact-sizes.sh build/server/photon-data.tar build/server/valhalla.tar build/server/tiles.pmtiles
 	docker build --platform $(PLATFORMS) -t getmapstack/$(COUNTRY) ./build/server
 	rm build/server/valhalla.tar build/server/valhalla.json build/server/photon-data.tar build/server/tiles.pmtiles build/server/explorer-countries.json
 	@echo "=== Built getmapstack/$(COUNTRY) ==="

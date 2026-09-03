@@ -37,7 +37,14 @@ SLUG_TABLE="/usr/local/share/getmapstack/pbf-slugs.txt"
 [[ -f "$SLUG_TABLE" ]] || { echo "Error: slug table not found: $SLUG_TABLE"; exit 1; }
 PBF_SLUG=$(awk -v c="$COUNTRY" '/^#/ { next } $1 == c { print $2; exit }' "$SLUG_TABLE")
 PBF_SLUG="${PBF_SLUG:-$COUNTRY}"
-PBF_URL="https://download.geofabrik.de/${REGION}/${PBF_SLUG}-latest.osm.pbf"
+# Geofabrik files most countries under a continent, but a few extracts sit at the root of
+# its download tree with no directory segment at all. The region "root" means exactly
+# that: build the URL without one, rather than requesting a path that does not exist.
+if [ "${REGION}" = "root" ]; then
+  PBF_URL="https://download.geofabrik.de/${PBF_SLUG}-latest.osm.pbf"
+else
+  PBF_URL="https://download.geofabrik.de/${REGION}/${PBF_SLUG}-latest.osm.pbf"
+fi
 PBF_FILE="${ARTIFACTS_DIR}/osm/${PBF_SLUG}.osm.pbf"
 DATE_FILE="${ARTIFACTS_DIR}/osm/${PBF_SLUG}.date"
 CACHE_DIR="${ARTIFACTS_DIR}/planetiler-cache"

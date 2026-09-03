@@ -29,6 +29,7 @@ case "$COUNTRY" in
   bahamas) CC="bs" ;;
   bahrain) CC="bh" ;;
   bangladesh) CC="bd" ;;
+  belarus) CC="by" ;;
   belgium) CC="be" ;;
   belize) CC="bz" ;;
   benin) CC="bj" ;;
@@ -43,6 +44,7 @@ case "$COUNTRY" in
   burundi) CC="bi" ;;
   cabo-verde) CC="cv" ;;
   cambodia) CC="kh" ;;
+  canada) CC="ca" ;;
   cameroon) CC="cm" ;;
   central-african-republic) CC="cf" ;;
   chad) CC="td" ;;
@@ -70,9 +72,11 @@ case "$COUNTRY" in
   ethiopia) CC="et" ;;
   fiji) CC="fj" ;;
   finland) CC="fi" ;;
+  france) CC="fr" ;;
   gabon) CC="ga" ;;
   gambia) CC="gm" ;;
   georgia) CC="ge" ;;
+  germany) CC="de" ;;
   ghana) CC="gh" ;;
   greece) CC="gr" ;;
   guatemala) CC="gt" ;;
@@ -146,6 +150,7 @@ case "$COUNTRY" in
   portugal) CC="pt" ;;
   qatar) CC="qa" ;;
   romania) CC="ro" ;;
+  russia) CC="ru" ;;
   rwanda) CC="rw" ;;
   samoa) CC="ws" ;;
   sao-tome-and-principe) CC="st" ;;
@@ -178,6 +183,7 @@ case "$COUNTRY" in
   turkmenistan) CC="tm" ;;
   tuvalu) CC="tv" ;;
   uganda) CC="ug" ;;
+  ukraine) CC="ua" ;;
   united-arab-emirates) CC="ae" ;;
   united-kingdom) CC="gb" ;;
   uruguay) CC="uy" ;;
@@ -209,7 +215,14 @@ OSM_DIR="$ROOT/artifacts/osm"; CACHE_DIR="$ROOT/artifacts/cache"; ART_DIR="$ROOT
 mkdir -p "$OSM_DIR" "$CACHE_DIR" "$ART_DIR"
 PBF_FILE="$OSM_DIR/${PBF_SLUG}.osm.pbf"
 DATE_FILE="$OSM_DIR/${PBF_SLUG}.date"
-PBF_URL="https://download.geofabrik.de/${REGION}/${PBF_SLUG}-latest.osm.pbf"
+# Geofabrik files most countries under a continent, but a few extracts sit at the root of
+# its download tree with no directory segment at all. The region "root" means exactly
+# that: build the URL without one, rather than requesting a path that does not exist.
+if [ "${REGION}" = "root" ]; then
+  PBF_URL="https://download.geofabrik.de/${PBF_SLUG}-latest.osm.pbf"
+else
+  PBF_URL="https://download.geofabrik.de/${REGION}/${PBF_SLUG}-latest.osm.pbf"
+fi
 
 # NET/NOMI are fixed container/network names - concurrent runs on one host are
 # unsupported; run one import at a time.

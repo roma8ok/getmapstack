@@ -49,28 +49,27 @@ COPY gateway/ ./
 RUN --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -ldflags="-s -w" -o /out/gateway .
 
-# Runs natively on the build host ($BUILDPLATFORM) so the multi-GB tar
-# extraction is never QEMU-emulated. The complete /data content is assembled
-# here and lands in the final stage as ONE layer: the single COPY creates
-# /data from scratch, stamping it with a deterministic mtime from this
-# shared stage, so both platforms produce an identical, registry-deduplicated
-# layer. Never add a second COPY into /data in the final stage - adding
-# entries to an existing /data bumps its mtime with build wall-clock time
-# and forks the layer per platform.
+# Runs natively on the build host ($BUILDPLATFORM) so the multi-GB tar extraction is
+# never QEMU-emulated. The stage assembles four /split roots, one per /data layer of
+# the final stage: photon (the geocoding index, the largest component), valhalla (the
+# routing tile extract), tiles (the vector basemap) and rest (configs, fonts, sprites,
+# styles, explorer). The registry caps a compressed layer at 10 GB, which a single
+# /data layer no longer clears for the largest countries; one layer per component
+# keeps each under it, and check-artifact-sizes.sh proves that before docker runs.
 FROM --platform=$BUILDPLATFORM ubuntu:24.04 AS data
 
 RUN --mount=type=bind,source=photon-data.tar,target=/tmp/photon-data.tar \
-    mkdir -p /out/photon && tar -xf /tmp/photon-data.tar -C /out/photon
-COPY valhalla.tar /out/valhalla.tar
-COPY valhalla.json /out/valhalla.json
-COPY ATTRIBUTION.txt /out/ATTRIBUTION.txt
+    mkdir -p /split/photon/photon && tar -xf /tmp/photon-data.tar -C /split/photon/photon
+COPY valhalla.tar /split/valhalla/valhalla.tar
+COPY valhalla.json /split/rest/valhalla.json
+COPY ATTRIBUTION.txt /split/rest/ATTRIBUTION.txt
 
 # Map assets: fonts (Martin cuts glyph PBFs from these at request time), sprite SVG
 # sources, and the style template (rendered by the entrypoint - see entrypoint.sh).
 ADD --checksum=sha256:0c34df072a3fa7efbb7cbf34950e1f971a4447cffe365d3a359e2d4089b958f5 \
     https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.015/NotoSans-v2.015.zip /tmp/notosans.zip
 ADD --checksum=sha256:69975a0ac8472717870aefeab0a4d52739308d90856b9955313b2ad5e0148d68 \
-    https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/SubsetOTF/KR/NotoSansKR-Regular.otf /out/fonts/NotoSansKR-Regular.otf
+    https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/SubsetOTF/KR/NotoSansKR-Regular.otf /split/rest/fonts/NotoSansKR-Regular.otf
 ADD --checksum=sha256:10e85011008108308e6feab0408242acb07804da61ede3d3ff236461ae07ab1b \
     https://github.com/notofonts/georgian/releases/download/NotoSansGeorgian-v2.005/NotoSansGeorgian-v2.005.zip /tmp/notosansgeorgian.zip
 ADD --checksum=sha256:b4bc74bed10eddeb4f4d7137e19d8c8e7894ccdb00e0ee18d0c450a713c4adcf \
@@ -79,30 +78,30 @@ ADD --checksum=sha256:0fff84171fdaff48efe3a794a403af6d26598a27986e73e8603c15e37f
     https://github.com/maplibre/maplibre-gl-js/releases/download/v6.1.0/dist.zip /tmp/maplibre.zip
 RUN apt-get update && apt-get install -y --no-install-recommends unzip \
   && rm -rf /var/lib/apt/lists/* \
-  && mkdir -p /out/fonts /out/sprites/bright /out/styles \
+  && mkdir -p /split/rest/fonts /split/rest/sprites/bright /split/rest/styles \
   && unzip -j /tmp/notosans.zip \
        'NotoSans/hinted/ttf/NotoSans-Regular.ttf' \
        'NotoSans/hinted/ttf/NotoSans-Bold.ttf' \
-       'NotoSans/hinted/ttf/NotoSans-Italic.ttf' -d /out/fonts \
+       'NotoSans/hinted/ttf/NotoSans-Italic.ttf' -d /split/rest/fonts \
   && unzip -j /tmp/notosansgeorgian.zip \
-       'NotoSansGeorgian/hinted/ttf/NotoSansGeorgian-Regular.ttf' -d /out/fonts \
+       'NotoSansGeorgian/hinted/ttf/NotoSansGeorgian-Regular.ttf' -d /split/rest/fonts \
   && tar -xzf /tmp/bright.tar.gz -C /tmp \
   # airport_11.svg exists in both icon sets and the two files differ, so the style's own
   # copy has to land last - the order the style's upstream sprite build uses.
   && SRC=/tmp/openfreemap-styles-72e1480dfc92858d334647037988bd2591fdb021 \
-  && cp $SRC/styles/liberty/svgs/svgs_iconset/*.svg /out/sprites/bright/ \
-  && cp $SRC/styles/liberty/svgs/svgs_not_in_iconset/*.svg /out/sprites/bright/ \
-  && cp $SRC/styles/bright/icons_unique/*.svg /out/sprites/bright/ \
-  && mkdir -p /out/explorer/vendor \
+  && cp $SRC/styles/liberty/svgs/svgs_iconset/*.svg /split/rest/sprites/bright/ \
+  && cp $SRC/styles/liberty/svgs/svgs_not_in_iconset/*.svg /split/rest/sprites/bright/ \
+  && cp $SRC/styles/bright/icons_unique/*.svg /split/rest/sprites/bright/ \
+  && mkdir -p /split/rest/explorer/vendor \
   && unzip -qj /tmp/maplibre.zip \
        'dist/maplibre-gl.mjs' 'dist/maplibre-gl-shared.mjs' \
-       'dist/maplibre-gl-worker.mjs' 'dist/maplibre-gl.css' -d /out/explorer/vendor \
-  && mv /out/explorer/vendor/maplibre-gl.mjs /out/explorer/vendor/maplibre-gl.js
-COPY tiles.pmtiles /out/tiles.pmtiles
-COPY martin.yaml /out/martin.yaml
-COPY assets/bright.json.tmpl /out/styles/bright.json.tmpl
-COPY explorer/ /out/explorer/
-COPY explorer-countries.json /out/explorer/countries.json
+       'dist/maplibre-gl-worker.mjs' 'dist/maplibre-gl.css' -d /split/rest/explorer/vendor \
+  && mv /split/rest/explorer/vendor/maplibre-gl.mjs /split/rest/explorer/vendor/maplibre-gl.js
+COPY tiles.pmtiles /split/tiles/tiles.pmtiles
+COPY martin.yaml /split/rest/martin.yaml
+COPY assets/bright.json.tmpl /split/rest/styles/bright.json.tmpl
+COPY explorer/ /split/rest/explorer/
+COPY explorer-countries.json /split/rest/explorer/countries.json
 
 FROM ubuntu:24.04
 
@@ -130,9 +129,19 @@ COPY --from=gateway-build /out/gateway /usr/local/bin/gateway
 ADD --checksum=sha256:6ea66d598a3f6fc1b59b0f81ad4f8abee72ccdb9d3db03bc12008974cdebd58d --chmod=644 \
     https://github.com/komoot/photon/releases/download/1.2.1/photon-1.2.1.jar /opt/photon.jar
 
-RUN groupadd -r getmapstack && useradd -r -g getmapstack -d /data -s /sbin/nologin getmapstack
+RUN groupadd -r -g 999 getmapstack && useradd -r -u 999 -g 999 -d /data -s /sbin/nologin getmapstack
 
-COPY --from=data --chown=getmapstack:getmapstack /out /data
+# /data arrives as four layers, one per component. --link builds each layer
+# independently of the base image: both platforms read the same data stage and produce
+# byte-identical layers, keeping the registry dedup that a plain second COPY into
+# /data used to break by bumping the directory mtime. The --chown must stay numeric
+# (a --link layer cannot resolve names against /etc/passwd) and also owns the /data
+# entry itself in every layer, which keeps the runtime user's home writable - the
+# geocoder creates lock files under /data/photon at startup.
+COPY --link --chown=999:999 --from=data /split/photon /data
+COPY --link --chown=999:999 --from=data /split/valhalla /data
+COPY --link --chown=999:999 --from=data /split/tiles /data
+COPY --link --chown=999:999 --from=data /split/rest /data
 
 # Third-party license notices for the cherry-picked binary and libraries
 COPY --from=valhalla /deps/doc/ /usr/share/doc/valhalla-deps/

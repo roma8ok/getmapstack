@@ -28,7 +28,14 @@ OSM_DIR="$ROOT/artifacts/osm"
 mkdir -p "$OSM_DIR"
 PBF_FILE="$OSM_DIR/${PBF_SLUG}.osm.pbf"
 DATE_FILE="$OSM_DIR/${PBF_SLUG}.date"
-PBF_URL="https://download.geofabrik.de/${REGION}/${PBF_SLUG}-latest.osm.pbf"
+# Geofabrik files most countries under a continent, but a few extracts sit at the root of
+# its download tree with no directory segment at all. The region "root" means exactly
+# that: build the URL without one, rather than requesting a path that does not exist.
+if [ "${REGION}" = "root" ]; then
+  PBF_URL="https://download.geofabrik.de/${PBF_SLUG}-latest.osm.pbf"
+else
+  PBF_URL="https://download.geofabrik.de/${REGION}/${PBF_SLUG}-latest.osm.pbf"
+fi
 
 # The sidecar is a claim about the bytes on disk, and from here until it is rewritten
 # below that claim may stop being true. Drop it up front: no sidecar is always safe
