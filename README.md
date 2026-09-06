@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**[Quick start](#quick-start)** · **[Countries](#countries)** · **[What you get](#what-you-get)** · **[Build it yourself](#build-it-yourself)**
+**[Quick start](#quick-start)** · **[Countries](#countries)** · **[What you get](#what-you-get)** · **[Use it from a coding agent](#use-it-from-a-coding-agent)** · **[Build it yourself](#build-it-yourself)**
 
 </div>
 
@@ -839,6 +839,26 @@ Two more configure the map service specifically: `PUBLIC_URL`
   HTTP 400. Area features still carry an `extent` bounding box where OSM has one.
 - **One country per image.** A route that leaves the country in the image has no data to
   follow - run the image for the country you need, or run several.
+
+## Use it from a coding agent
+
+The repository ships an Agent Skill that teaches a coding agent to answer "every
+pharmacy within 2 km of here" against a running container, and to put the answer on a
+map. It knows the parts that are easy to get wrong: that a category is an OSM tag and
+not a word to search for, that the geocoder returns at most fifty features per call
+whatever you ask for, and how to cover a larger area without counting anything twice.
+
+```
+/plugin marketplace add roma8ok/getmapstack
+/plugin install getmapstack@getmapstack
+```
+
+A marketplace added this way starts with auto-update off. To have new versions arrive
+on their own, open `/plugin`, go to the Marketplaces tab, pick getmapstack and choose
+Enable auto-update.
+
+The skill is plain [Agent Skills](https://agentskills.io) format, so an agent that
+reads skills from its own directory can use a copy of `skills/getmapstack/` instead.
 
 ## Build it yourself
 

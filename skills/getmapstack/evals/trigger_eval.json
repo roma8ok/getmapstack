@@ -1,0 +1,19 @@
+[
+  {"query": "Find every supermarket within 2 km of the centre of Nicosia", "should_trigger": true},
+  {"query": "What pharmacies are near 35.1856, 33.3823?", "should_trigger": true},
+  {"query": "Show me the schools around this address on a map", "should_trigger": true},
+  {"query": "I need points of interest near a location without using the Google Maps API", "should_trigger": true},
+  {"query": "Start getmapstack for Cyprus and find the bakeries in Limassol", "should_trigger": true},
+  {"query": "Something on localhost:4326 is returning an empty feature list, help", "should_trigger": true},
+  {"query": "List every petrol station within 5 km and draw them", "should_trigger": true},
+  {"query": "Which restaurants are within walking distance of the hotel?", "should_trigger": true},
+
+  {"query": "Add a new country to the getmapstack build pipeline", "should_trigger": false},
+  {"query": "Why is my Dockerfile layer so large?", "should_trigger": false},
+  {"query": "Geocode this list of addresses with the Google Geocoding API", "should_trigger": false},
+  {"query": "Explain how vector tiles differ from raster tiles", "should_trigger": false},
+  {"query": "Write a MapLibre style layer for building footprints", "should_trigger": false},
+  {"query": "What is the population of Nicosia?", "should_trigger": false},
+  {"query": "Set up a PostGIS database for my application", "should_trigger": false},
+  {"query": "Route from Nicosia to Limassol by car", "should_trigger": false}
+]
