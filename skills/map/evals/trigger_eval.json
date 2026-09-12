@@ -1,0 +1,15 @@
+[
+  {"query": "Show these features on a map", "should_trigger": true},
+  {"query": "Draw this GeoJSON file on the map the container serves", "should_trigger": true},
+  {"query": "Put the route we just computed on a map", "should_trigger": true},
+  {"query": "I have a FeatureCollection of pharmacies, render it on localhost:4326", "should_trigger": true},
+  {"query": "Open an interactive map of found.json", "should_trigger": true},
+  {"query": "The map page shows nothing, the features are all off screen", "should_trigger": true},
+
+  {"query": "Find every supermarket within 2 km of the centre of Nicosia", "should_trigger": false},
+  {"query": "How do I get from Nicosia to Limassol by car", "should_trigger": false},
+  {"query": "Write a MapLibre style layer for building footprints", "should_trigger": false},
+  {"query": "Explain how vector tiles differ from raster tiles", "should_trigger": false},
+  {"query": "Build the Cyprus image", "should_trigger": false},
+  {"query": "Plot this CSV as a bar chart", "should_trigger": false}
+]

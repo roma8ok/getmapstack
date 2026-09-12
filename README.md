@@ -324,15 +324,25 @@ curl localhost:4326/valhalla/route -d '{
 **Decoding the shape:** every leg carries `shape` as an encoded polyline at **precision
 6**, while Google's algorithm and most off-the-shelf decoders default to precision 5.
 Decoded at precision 5, the route lands roughly ten times away from where it belongs.
-Use a precision-6 decoder, or ask for GeoJSON instead:
+Use a precision-6 decoder, or ask for the OSRM-compatible answer with GeoJSON geometry.
+`shape_format` only acts together with `format: osrm`; on its own it changes nothing:
 
 ```bash
 curl localhost:4326/valhalla/route -d '{
   "locations":[{"lat":35.1856,"lon":33.3823},{"lat":34.6786,"lon":33.0413}],
   "costing":"auto",
+  "format":"osrm",
   "shape_format":"geojson"
 }'
 ```
+
+```json
+{"routes":[{"distance":84736.195,"duration":3770.214,"geometry":{"type":"LineString","coordinates":[[33.382234,35.185465],...]},"legs":[...]}],"waypoints":[...]}
+```
+
+The answer changes shape with it: `routes[].geometry` instead of `trip.legs[].shape`,
+and `legs[].duration` and `legs[].distance` in seconds and metres instead of
+`trip.legs[].summary`.
 
 #### Time-dependent route
 
@@ -842,11 +852,13 @@ Two more configure the map service specifically: `PUBLIC_URL`
 
 ## Use it from a coding agent
 
-The repository ships an Agent Skill that teaches a coding agent to answer "every
-pharmacy within 2 km of here" against a running container, and to put the answer on a
-map. It knows the parts that are easy to get wrong: that a category is an OSM tag and
-not a word to search for, that the geocoder returns at most fifty features per call
-whatever you ask for, and how to cover a larger area without counting anything twice.
+The repository ships three Agent Skills that teach a coding agent to work against a
+running container: **nearby** finds "every pharmacy within 2 km of here" and knows that
+a category is an OSM tag and not a word to search for, that the geocoder returns at
+most fifty features per call whatever you ask for, and how to cover a larger area
+without counting anything twice; **route** builds a route from A to B or through the
+places nearby found, in the best order, with the end chosen rather than assumed;
+**map** shows what either produced on the map the container serves.
 
 ```
 /plugin marketplace add roma8ok/getmapstack
@@ -857,8 +869,9 @@ A marketplace added this way starts with auto-update off. To have new versions a
 on their own, open `/plugin`, go to the Marketplaces tab, pick getmapstack and choose
 Enable auto-update.
 
-The skill is plain [Agent Skills](https://agentskills.io) format, so an agent that
-reads skills from its own directory can use a copy of `skills/getmapstack/` instead.
+The skills are plain [Agent Skills](https://agentskills.io) format, so an agent that
+reads skills from its own directory can use a copy of `skills/nearby/`, `skills/route/`
+and `skills/map/` instead.
 
 ## Build it yourself
 

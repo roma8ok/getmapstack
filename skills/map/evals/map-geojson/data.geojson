@@ -1,0 +1,6 @@
+{"type":"FeatureCollection","features":[
+ {"type":"Feature","geometry":{"type":"Point","coordinates":[33.3625,35.1739]},"properties":{"name":"Ledra Street"}},
+ {"type":"Feature","geometry":{"type":"Point","coordinates":[33.3618,35.1817]},"properties":{"name":"Kyrenia Gate"}},
+ {"type":"Feature","geometry":{"type":"Point","coordinates":[33.3661,35.1736]},"properties":{"name":"Archaeological Park"}},
+ {"type":"Feature","geometry":{"type":"LineString","coordinates":[[33.3625,35.1739],[33.3640,35.1770],[33.3618,35.1817]]},"properties":{"name":"Walk north"}}
+]}

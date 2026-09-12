@@ -1,6 +1,6 @@
 {
   "name": "getmapstack",
-  "description": "Self-hosted mapping skills for getmapstack: find places near a location from local OpenStreetMap data and show them on a map.",
+  "description": "Self-hosted mapping skills for getmapstack: find places near a location from local OpenStreetMap data, route through them in the best order, and show the result on a map.",
   "owner": {
     "name": "roma8ok"
   },
@@ -8,11 +8,11 @@
     {
       "name": "getmapstack",
       "source": "./",
-      "description": "Find places and points of interest near a location using a self-hosted getmapstack container, and show them on a map.",
-      "version": "0.1.0",
+      "description": "Find places near a location, build a route through them in the best order, and show the result on a map, all against a self-hosted getmapstack container.",
+      "version": "0.2.0",
       "license": "MIT",
       "homepage": "https://github.com/roma8ok/getmapstack",
-      "keywords": ["maps", "geocoding", "openstreetmap", "self-hosted", "offline"]
+      "keywords": ["maps", "geocoding", "routing", "openstreetmap", "self-hosted", "offline"]
     }
   ]
 }

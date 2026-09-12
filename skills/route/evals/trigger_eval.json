@@ -1,0 +1,19 @@
+[
+  {"query": "How do I get from Nicosia to Limassol by car?", "should_trigger": true},
+  {"query": "How long is the drive between 35.1856,33.3823 and 34.6786,33.0413?", "should_trigger": true},
+  {"query": "Plan a walking tour of the museums we just found", "should_trigger": true},
+  {"query": "Visit these five addresses in the best order and show the route on a map", "should_trigger": true},
+  {"query": "Route through the pharmacies in found.json starting from the hotel", "should_trigger": true},
+  {"query": "What is the fastest way to cycle from the harbour to the castle?", "should_trigger": true},
+  {"query": "Give me turn-by-turn directions from A to B using localhost:4326", "should_trigger": true},
+  {"query": "The optimized route on my getmapstack container returns 400, help", "should_trigger": true},
+
+  {"query": "Find every pharmacy within 2 km of the centre of Nicosia", "should_trigger": false},
+  {"query": "What can I reach in 20 minutes on foot from here?", "should_trigger": false},
+  {"query": "Build a travel time matrix between these depots", "should_trigger": false},
+  {"query": "Where should the three of us meet?", "should_trigger": false},
+  {"query": "Draw this GeoJSON on a map", "should_trigger": false},
+  {"query": "Build the Cyprus image", "should_trigger": false},
+  {"query": "Get directions with the Google Directions API", "should_trigger": false},
+  {"query": "Explain how Valhalla's tiles are structured", "should_trigger": false}
+]

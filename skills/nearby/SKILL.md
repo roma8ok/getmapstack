@@ -1,11 +1,11 @@
 ---
-name: getmapstack
+name: nearby
 description: Use when a request needs to find places or points of interest near a location from self-hosted map data - "every pharmacy within 2 km", "supermarkets near this address", "what is around these coordinates" - and when what you find should be shown on a map. Covers starting the getmapstack container that answers these queries. Triggers when a getmapstack container is being started or used, on localhost:4326, and on nearby-search requests where no external map API is wanted; not on building, publishing or maintaining the images themselves.
 license: MIT
 compatibility: Requires Docker, bash, curl and jq
 ---
 
-# Getmapstack
+# Nearby
 
 One Docker image per country, carrying OpenStreetMap routing, geocoding and a vector
 map. The container publishes a single port, 4326, and answers under three prefixes:
@@ -14,8 +14,11 @@ images. Nothing leaves the machine, and there is no API key.
 
 ## Start a container
 
-Pick the country that contains the place in question. The README at
-https://github.com/roma8ok/getmapstack lists the countries that have an image.
+Pick the country that contains the place in question: an image covers one country, so
+a search cannot cross a border. The image is `ghcr.io/roma8ok/getmapstack/<slug>`,
+where the slug is the country's English name in lower case with hyphens (`cyprus`,
+`south-korea`, `united-kingdom`); the README at https://github.com/roma8ok/getmapstack
+lists the countries that have one, and is the place to look when a pull fails.
 
 ```bash
 docker run -d --name getmapstack -p 4326:4326 ghcr.io/roma8ok/getmapstack/cyprus
@@ -23,7 +26,9 @@ until curl -sf localhost:4326/healthz | grep -q ok; do sleep 2; done
 ```
 
 The wait is not optional: the geocoder opens its index at startup, which takes seconds
-for a small country and minutes for the largest.
+for a small country and minutes for the largest. A container named `getmapstack` that
+is already running for another country holds both the name and the port: remove it
+first with `docker rm -f getmapstack`.
 
 ## Finding features near a point
 
@@ -80,12 +85,15 @@ skill's own directory, so run the script from there or give its full path. `--he
 the rest, and its exit code separates a bad argument from a refused request from an
 unreachable container.
 
-**4. Render.** See [references/render.md](references/render.md).
+**4. Render.** Hand `found.json` to the `map` skill: it copies a page template and the
+file into the running container and serves them from there. To visit what you found in
+the best order, hand the same file to the `route` skill first.
 
 ## References
 
 - Finding features near a point, in full: [references/nearby.md](references/nearby.md)
-- Showing what you found on a map: [references/render.md](references/render.md)
+- Showing what you found on a map: the `map` skill
+- Visiting what you found in the best order: the `route` skill
 
 Every other method the container serves - routes, travel-time areas, matrices, static
 images, the tile and style endpoints - is documented in that same README:

@@ -1,0 +1,226 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "osm_type": "W",
+        "osm_id": 977529302,
+        "osm_key": "tourism",
+        "osm_value": "attraction",
+        "type": "house",
+        "name": "Archaeological Park of the old Nicosia town hall",
+        "street": "Palias Ilektrikis",
+        "locality": "Omeriye",
+        "city": "Omerie",
+        "county": "Nicosia Muncipality",
+        "state": "Cyprus",
+        "country": "Cyprus",
+        "postcode": "1016",
+        "countrycode": "CY",
+        "extent": [
+          33.3656927,
+          35.1739168,
+          33.3664394,
+          35.173183
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.366112,
+          35.1735857
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "osm_type": "N",
+        "osm_id": 5943274855,
+        "osm_key": "tourism",
+        "osm_value": "attraction",
+        "type": "house",
+        "name": "Venetian Column",
+        "street": "Sarayönü Sokak",
+        "locality": "İbrahim Paşa",
+        "city": "Lefkoşa",
+        "county": "Lefkoşa District",
+        "state": "Northern Cyprus",
+        "country": "Cyprus",
+        "postcode": "99010",
+        "countrycode": "CY"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.3608997,
+          35.1781247
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "osm_type": "W",
+        "osm_id": 878576704,
+        "osm_key": "tourism",
+        "osm_value": "attraction",
+        "type": "house",
+        "name": "Historical Samanbahçe Homes",
+        "street": "Şaban Paşa Sokak",
+        "locality": "İbrahim Paşa",
+        "city": "Lefkoşa",
+        "county": "Lefkoşa District",
+        "state": "Northern Cyprus",
+        "country": "Cyprus",
+        "postcode": "99010",
+        "countrycode": "CY",
+        "extent": [
+          33.3600215,
+          35.1809345,
+          33.3614944,
+          35.1794313
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.3606866,
+          35.1801987
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "osm_type": "W",
+        "osm_id": 435908955,
+        "osm_key": "tourism",
+        "osm_value": "attraction",
+        "type": "house",
+        "name": "Mevlevi Tekkesi",
+        "street": "Girne Caddesi",
+        "locality": "İbrahim Paşa",
+        "city": "Lefkoşa",
+        "county": "Lefkoşa District",
+        "state": "Northern Cyprus",
+        "country": "Cyprus",
+        "postcode": "99010",
+        "countrycode": "CY",
+        "extent": [
+          33.3617703,
+          35.1810234,
+          33.3620888,
+          35.180508
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.3619295,
+          35.1807657
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "osm_type": "N",
+        "osm_id": 8173344095,
+        "osm_key": "tourism",
+        "osm_value": "attraction",
+        "type": "house",
+        "name": "Kyrenia Gate",
+        "street": "Girne Caddesi",
+        "locality": "Yenişehir",
+        "district": "Neapoli",
+        "city": "Lefkoşa",
+        "county": "Lefkoşa District",
+        "state": "Northern Cyprus",
+        "country": "Cyprus",
+        "postcode": "99010",
+        "countrycode": "CY"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.3618029,
+          35.181665
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "osm_type": "W",
+        "osm_id": 1094472480,
+        "osm_key": "tourism",
+        "osm_value": "attraction",
+        "type": "house",
+        "name": "Local Archaeological Museum Ledroi",
+        "street": "Andrea Dimitriou",
+        "locality": "Λαϊκή Γειτονιά",
+        "city": "Trypiotis",
+        "county": "Nicosia Muncipality",
+        "state": "Cyprus",
+        "country": "Cyprus",
+        "postcode": "1066",
+        "countrycode": "CY",
+        "extent": [
+          33.3545351,
+          35.1666361,
+          33.356701,
+          35.1643955
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.3555907,
+          35.1654108
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "osm_type": "N",
+        "osm_id": 4235858689,
+        "osm_key": "tourism",
+        "osm_value": "attraction",
+        "type": "house",
+        "housenumber": "26",
+        "name": "Kyriakides Piano Gallery",
+        "street": "Nikis",
+        "district": "Agioi Omologites",
+        "city": "Agioi Omologites",
+        "county": "Nicosia Muncipality",
+        "state": "Cyprus",
+        "country": "Cyprus",
+        "postcode": "1086",
+        "countrycode": "CY"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.357754,
+          35.1583738
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.5,
+          34.5
+        ]
+      },
+      "properties": {
+        "name": "Lighthouse platform"
+      }
+    }
+  ]
+}

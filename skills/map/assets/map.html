@@ -1,0 +1,168 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Map</title>
+<link rel="stylesheet" href="/vendor/maplibre-gl.css">
+<style>html, body, #map { margin: 0; height: 100% }</style>
+<div id="map"></div>
+<script type="module">
+// MapLibre GL JS 6 has no default export, so this must be a namespace import.
+import * as maplibregl from "/vendor/maplibre-gl.js";
+
+// Whatever is being shown is copied into the container under this one name.
+const data = await (await fetch("./data.json")).json();
+
+const map = new maplibregl.Map({
+  container: "map",
+  style: "/martin/style/bright",
+  center: [0, 0],
+  zoom: 1
+});
+// Exposed so a script or a browser console can ask the page what it shows.
+window.map = map;
+
+// The label stack: bold for the scripts Noto Sans covers, with the Georgian and Korean
+// faces the style ships for theirs. The order matters, since the container lets the
+// LAST font win a shared codepoint; and a font the container does not know renders
+// nothing.
+const labelFont = ["Noto Sans Georgian Regular", "Noto Sans KR Regular", "Noto Sans Bold"];
+
+map.on("load", () => {
+  map.addSource("data", { type: "geojson", data });
+  map.addLayer({
+    id: "polygons",
+    type: "fill",
+    source: "data",
+    filter: ["==", ["geometry-type"], "Polygon"],
+    paint: { "fill-color": ["coalesce", ["get", "color"], "#1a73e8"], "fill-opacity": 0.25 }
+  });
+  map.addLayer({
+    id: "polygon-outlines",
+    type: "line",
+    source: "data",
+    filter: ["==", ["geometry-type"], "Polygon"],
+    paint: { "line-color": ["coalesce", ["get", "color"], "#1a73e8"], "line-width": 1 }
+  });
+  map.addLayer({
+    id: "lines",
+    type: "line",
+    source: "data",
+    filter: ["==", ["geometry-type"], "LineString"],
+    layout: { "line-join": "round", "line-cap": "round" },
+    paint: { "line-color": ["coalesce", ["get", "color"], "#1a73e8"], "line-width": 4 }
+  });
+  // A point grows with the zoom, from 9 px on an overview to 12 px where the tags
+  // appear, so marker and tag read as one size; a point without a number stays 3 px
+  // smaller. The shadow is a second, wider circle beneath, the same soft drop the tags
+  // carry, so both sit on the map the same way.
+  // A zoom expression is only allowed at the top level, so the shadow's extra width is
+  // added into the stops rather than around them.
+  const radius = (extra = 0) => ["interpolate", ["linear"], ["zoom"],
+    12, ["case", ["has", "label"], 9 + extra, 6 + extra],
+    16, ["case", ["has", "label"], 12 + extra, 9 + extra]];
+  map.addLayer({
+    id: "points-shadow",
+    type: "circle",
+    source: "data",
+    filter: ["==", ["geometry-type"], "Point"],
+    paint: {
+      "circle-radius": radius(2),
+      "circle-color": "#000",
+      "circle-opacity": 0.25,
+      "circle-blur": 0.6,
+      "circle-translate": [0, 1.5]
+    }
+  });
+  map.addLayer({
+    id: "points",
+    type: "circle",
+    source: "data",
+    filter: ["==", ["geometry-type"], "Point"],
+    paint: {
+      "circle-radius": radius(),
+      "circle-color": ["coalesce", ["get", "color"], "#e11"],
+      "circle-stroke-width": 2.5,
+      "circle-stroke-color": "#fff"
+    }
+  });
+  map.addLayer({
+    id: "labels",
+    type: "symbol",
+    source: "data",
+    filter: ["all", ["==", ["geometry-type"], "Point"], ["has", "label"]],
+    layout: {
+      "text-field": ["to-string", ["get", "label"]],
+      "text-font": labelFont,
+      "text-size": ["interpolate", ["linear"], ["zoom"], 12, 11, 16, 13],
+      "text-allow-overlap": true,
+      // The number always draws, but its box still claims space: padded out to the
+      // circle, it keeps the tags of other points off this circle.
+      "text-padding": 6
+    },
+    // No halo: on a coloured disc a dark halo only smears the digit.
+    paint: { "text-color": "#fff" }
+  });
+
+  // The name sits on a white tag beside the circle, on whichever side is free, and only
+  // from a zoom where names have room; where they still crowd, the map hides some names
+  // and never a number. The tag is one small image stretched around the text, so it
+  // needs no sprite: the corners stay as drawn and only the middle stretches. The layer
+  // goes beneath the circles: symbols are placed from the top layer down, so the numbers
+  // claim their space first and the tags keep off them.
+  const tag = document.createElement("canvas");
+  tag.width = tag.height = 72;
+  const g = tag.getContext("2d");
+  g.shadowColor = "rgba(0, 0, 0, 0.28)"; g.shadowBlur = 4; g.shadowOffsetY = 2;
+  g.fillStyle = "rgba(255, 255, 255, 0.96)";
+  g.beginPath(); g.roundRect(8, 8, 56, 56, 10); g.fill();
+  g.shadowColor = "transparent";
+  g.strokeStyle = "#b9c3d0"; g.lineWidth = 1.5; g.stroke();
+  map.addImage("tag", g.getImageData(0, 0, 72, 72), { pixelRatio: 2, stretchX: [[20, 52]], stretchY: [[20, 52]], content: [16, 16, 56, 56] });
+  map.addLayer({
+    id: "names",
+    type: "symbol",
+    source: "data",
+    minzoom: 13,
+    filter: ["all", ["==", ["geometry-type"], "Point"], ["has", "name"]],
+    layout: {
+      "text-field": ["to-string", ["get", "name"]],
+      "text-font": labelFont,
+      "text-size": 12,
+      "text-max-width": 14,
+      "text-justify": "auto",
+      "text-variable-anchor": ["left", "right", "top", "bottom", "top-left", "top-right", "bottom-left", "bottom-right"],
+      "text-radial-offset": 2,
+      "icon-image": "tag",
+      "icon-text-fit": "both",
+      "icon-text-fit-padding": [4, 7, 4, 7],
+      // Only the text box takes part in placement. MapLibre 6 does not move the fitted
+      // icon's box with the variable anchor: it stays centred on the point, hits the
+      // number's box on every side, and not one tag is drawn. The text box is padded
+      // out to roughly the tag's edge instead.
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
+      "text-padding": 6
+    },
+    paint: { "text-color": "#1c2430" }
+  }, "points-shadow");
+
+  // The view comes from the data, never from a zoom picked in advance: a route is
+  // wider than its stops, and a polygon is wider than its centre.
+  const bounds = new maplibregl.LngLatBounds();
+  const extend = c => (typeof c[0] === "number") ? bounds.extend(c) : c.forEach(extend);
+  data.features.forEach(f => { if (f.geometry) extend(f.geometry.coordinates); });
+  if (!bounds.isEmpty()) map.fitBounds(bounds, { padding: 60, maxZoom: 16 });
+
+  map.on("click", "points", e => {
+    const p = e.features[0].properties;
+    // Names come from the map data, so they are text, never markup.
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const lines = [];
+    if (p.name) lines.push(`<b>${esc(p.name)}</b>`);
+    if (p.leg_time_s != null) lines.push(`${Math.round(p.leg_time_s / 60)} min, ${(p.leg_length_m / 1000).toFixed(1)} km from the previous stop`);
+    if (!lines.length) return;
+    new maplibregl.Popup().setLngLat(e.lngLat).setHTML(lines.join("<br>")).addTo(map);
+  });
+  map.on("mouseenter", "points", () => { map.getCanvas().style.cursor = "pointer"; });
+  map.on("mouseleave", "points", () => { map.getCanvas().style.cursor = ""; });
+});
+</script>
