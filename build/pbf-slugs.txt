@@ -22,3 +22,4 @@ senegal                 senegal-and-gambia
 gambia                  senegal-and-gambia
 haiti                   haiti-and-domrep
 dominican-republic      haiti-and-domrep
+usa                     us

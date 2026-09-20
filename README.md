@@ -224,6 +224,7 @@ Every other method is in [What you get](#what-you-get).
 | 🇺🇦 | Ukraine | 3.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/ukraine` |
 | 🇦🇪 | United Arab Emirates | 1.1 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/united-arab-emirates` |
 | 🇬🇧 | United Kingdom | 7.3 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/united-kingdom` |
+| 🇺🇸 | United States | 34.1 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/usa` |
 | 🇺🇾 | Uruguay | 0.7 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/uruguay` |
 | 🇺🇿 | Uzbekistan | 0.8 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/uzbekistan` |
 | 🇻🇺 | Vanuatu | 0.4 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/vanuatu` |
@@ -231,6 +232,13 @@ Every other method is in [What you get](#what-you-get).
 | 🇻🇳 | Vietnam | 1.2 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/vietnam` |
 | 🇿🇲 | Zambia | 0.6 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/zambia` |
 | 🇿🇼 | Zimbabwe | 0.5 GB | `docker run -p 4326:4326 ghcr.io/roma8ok/getmapstack/zimbabwe` |
+
+The United States image is the largest and the one worth a memory number: run with
+`docker run --memory 8g`, `getmapstack/usa` reports healthy in 16 seconds, settles at
+857 MB at rest, and rises to 2.47 GB after a coast-to-coast route (New York to Los
+Angeles, 4497 km, answered in 2.1 s). It covers Geofabrik's `us` extract - the fifty
+states and DC, Hawaii and Alaska included - not Puerto Rico, the US Virgin Islands or
+Guam.
 
 ## What you get
 

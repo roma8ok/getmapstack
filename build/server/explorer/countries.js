@@ -174,6 +174,7 @@ export const COUNTRIES = [
   { name: "Ukraine", slug: "ukraine", center: [31.2, 48.4], zoom: 5.6 },
   { name: "United Arab Emirates", slug: "united-arab-emirates", center: [54.3, 24.3], zoom: 6.8 },
   { name: "United Kingdom", slug: "united-kingdom", center: [-3.5, 55.0], zoom: 5 },
+  { name: "United States", slug: "usa", center: [-98.5, 39.8], zoom: 3.2 },
   { name: "Uruguay", slug: "uruguay", center: [-56.0, -32.8], zoom: 6.3 },
   { name: "Uzbekistan", slug: "uzbekistan", center: [64.6, 41.4], zoom: 5.2 },
   { name: "Vanuatu", slug: "vanuatu", center: [167.8, -16.5], zoom: 6.2 },

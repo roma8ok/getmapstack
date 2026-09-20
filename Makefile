@@ -176,12 +176,24 @@ region.ukraine = europe
 region.united-arab-emirates = asia
 region.united-kingdom = europe
 region.uruguay = south-america
+region.usa = north-america
 region.uzbekistan = asia
 region.vanuatu = australia-oceania
 region.venezuela = south-america
 region.vietnam = asia
 region.zambia = africa
 region.zimbabwe = africa
+
+# Which server Dockerfile a country builds from. A country whose geocoding index cannot
+# fit one registry layer builds from Dockerfile.multilayer, which ships that index as one
+# layer per shard; a country without a row here builds from Dockerfile.
+dockerfile.usa = Dockerfile.multilayer
+SERVER_DOCKERFILE = $(or $(dockerfile.$(COUNTRY)),Dockerfile)
+
+# What the size guard judges. The plain Dockerfile ships each component as one layer;
+# the multilayer one ships the geocoding index per shard and the vector tiles in two
+# parts, so the guard judges those pieces instead of the whole files.
+GUARD_ARGS = $(if $(filter Dockerfile.multilayer,$(SERVER_DOCKERFILE)),--photon-shards build/server/photon-data.tar --tiles-parts 2 build/server/tiles.pmtiles build/server/valhalla.tar,build/server/photon-data.tar build/server/valhalla.tar build/server/tiles.pmtiles)
 
 REGION = $(region.$(COUNTRY))
 
@@ -197,7 +209,7 @@ VALHALLA_CONCURRENCY ?=
 # Target platforms for server images; override for single-arch dev builds (e.g. PLATFORMS=linux/arm64)
 PLATFORMS ?= linux/amd64,linux/arm64
 
-.PHONY: build-valhalla-builder create-valhalla-tiles build-photon-builder create-photon-data build-planetiler-builder create-vector-tiles build-server test-gateway fetch-osm update-bright-style clean-artifacts help
+.PHONY: build-valhalla-builder create-valhalla-tiles build-photon-builder create-photon-data build-planetiler-builder create-vector-tiles build-server test-gateway test-tileparts fetch-osm update-bright-style clean-artifacts help
 
 build-valhalla-builder:
 	cp build/pbf-slugs.txt build/valhalla/pbf-slugs.txt
@@ -268,13 +280,16 @@ endif
 	cp artifacts/photon-$(COUNTRY).tar build/server/photon-data.tar
 	cp artifacts/tiles-$(COUNTRY).pmtiles build/server/tiles.pmtiles
 	jq -n --args '{countries: $$ARGS.positional}' "$(COUNTRY)" > build/server/explorer-countries.json
-	./build/server/check-artifact-sizes.sh build/server/photon-data.tar build/server/valhalla.tar build/server/tiles.pmtiles
-	docker build --platform $(PLATFORMS) -t getmapstack/$(COUNTRY) ./build/server
+	./build/server/check-artifact-sizes.sh $(GUARD_ARGS)
+	docker build --platform $(PLATFORMS) -f build/server/$(SERVER_DOCKERFILE) -t getmapstack/$(COUNTRY) ./build/server
 	rm build/server/valhalla.tar build/server/valhalla.json build/server/photon-data.tar build/server/tiles.pmtiles build/server/explorer-countries.json
 	@echo "=== Built getmapstack/$(COUNTRY) ==="
 
 test-gateway:
 	cd build/server/gateway && go test ./... -count=1
+
+test-tileparts:
+	cd build/server/tileparts && go test ./... -count=1
 
 # Reclaim space in artifacts/. Lists by default; CONFIRM=1 deletes. KEEP= protects
 # countries, ONLY= restricts to them. The OSM download cache and the shared Planetiler
@@ -318,6 +333,7 @@ help::
 	@echo "  make build-server COUNTRY=cyprus               Build server image getmapstack/cyprus"
 	@echo "  ... PLATFORMS=linux/arm64                      Single-arch override (default: linux/amd64,linux/arm64)"
 	@echo "  make test-gateway                              Run unit tests for the in-image gateway (needs Go)"
+	@echo "  make test-tileparts                            Run unit tests for the tile part server of the multilayer image (needs Go)"
 	@echo ""
 	@echo "  Map style:"
 	@echo "  make update-bright-style                      Diff the vendored map style against upstream"

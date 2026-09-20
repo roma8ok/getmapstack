@@ -187,6 +187,7 @@ case "$COUNTRY" in
   united-arab-emirates) CC="ae" ;;
   united-kingdom) CC="gb" ;;
   uruguay) CC="uy" ;;
+  usa) CC="us" ;;
   uzbekistan) CC="uz" ;;
   vanuatu) CC="vu" ;;
   venezuela) CC="ve" ;;

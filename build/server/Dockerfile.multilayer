@@ -1,0 +1,226 @@
+ARG TARGETARCH
+
+FROM ghcr.io/valhalla/valhalla:3.8.3 AS valhalla
+
+# Collect valhalla_service, its shared libs, and their license texts into /deps.
+# dpkg -S needs realpath (merged-/usr: ldd prints /lib/..., dpkg records
+# /usr/lib/...) and the arch qualifier stripped (libc6:arm64 -> libc6).
+# Only libprime_server.so.0 has no dpkg owner; its license ships in
+# THIRD_PARTY_LICENSES. Any other unowned lib fails the build.
+RUN mkdir -p /deps/bin /deps/lib /deps/doc/valhalla && \
+    cp /usr/local/bin/valhalla_service /deps/bin/ && \
+    cp /usr/local/share/doc/valhalla/COPYING /deps/doc/valhalla/COPYING && \
+    for lib in $(ldd /usr/local/bin/valhalla_service | grep -v 'not found' | awk '/=>/ {print $3}'); do \
+        cp "$lib" /deps/lib/; \
+        pkg=$(dpkg -S "$(realpath "$lib")" 2>/dev/null | cut -d: -f1); \
+        if [ -n "$pkg" ]; then \
+            mkdir -p "/deps/doc/$pkg"; \
+            cp "/usr/share/doc/$pkg/copyright" "/deps/doc/$pkg/copyright" || { echo "ERROR: no copyright file for $pkg" >&2; exit 1; }; \
+        else \
+            case "$(basename "$lib")" in \
+                libprime_server*) ;; \
+                *) echo "ERROR: $lib has no dpkg owner and no THIRD_PARTY_LICENSES entry" >&2; exit 1 ;; \
+            esac; \
+        fi; \
+    done
+
+# Martin (tiles/glyphs/sprites/styles/static-images server). The gnu build is required:
+# the musl release binary is compiled WITHOUT style rendering support and silently
+# ignores the rendering config key. Checksums differ per arch, so each arch gets its own
+# fetch stage and TARGETARCH picks one.
+FROM ubuntu:24.04 AS martin-fetch-amd64
+ADD --checksum=sha256:6fb5c5e1aff7d79b0eeb2b8d43bde6337a3440a704d10ebaaaf9a74dccd29abc \
+    https://github.com/maplibre/martin/releases/download/martin-v1.13.0/martin-x86_64-unknown-linux-gnu.tar.gz /tmp/martin.tar.gz
+
+FROM ubuntu:24.04 AS martin-fetch-arm64
+ADD --checksum=sha256:c91de2db460ef7bece33e6bc67dbdd6b05d161242025c69ece19f3efc8d80af8 \
+    https://github.com/maplibre/martin/releases/download/martin-v1.13.0/martin-aarch64-unknown-linux-gnu.tar.gz /tmp/martin.tar.gz
+
+FROM martin-fetch-${TARGETARCH} AS martin-fetch
+RUN mkdir -p /out && tar -xzf /tmp/martin.tar.gz -C /out martin
+
+FROM --platform=$BUILDPLATFORM golang:1.26 AS gateway-build
+ARG TARGETARCH
+WORKDIR /src
+COPY gateway/ ./
+# Go ships no precompiled standard library, so without the cache mount every cold run of
+# this stage recompiles net/http and its dependencies from scratch - once per target
+# platform, and again after any edit under gateway/.
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -ldflags="-s -w" -o /out/gateway .
+
+# The tile part server: this image ships its vector tiles in parts, and tileparts serves
+# them joined to the tile server. Built like the gateway, natively and cross-compiled.
+FROM --platform=$BUILDPLATFORM golang:1.26 AS tileparts-build
+ARG TARGETARCH
+WORKDIR /src
+COPY tileparts/ ./
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -ldflags="-s -w" -o /out/tileparts .
+
+# Runs natively on the build host ($BUILDPLATFORM) so the multi-GB tar extraction is
+# never QEMU-emulated. This is the multilayer variant of the server Dockerfile, for a
+# country whose geocoding index cannot fit one registry layer (the registry caps a
+# compressed layer at 10 GB). The stage assembles ten /split roots, one per /data layer
+# of the final stage: photon (the index minus its shards - cluster state and config, a
+# few kilobytes), shard0 to shard4 (one index shard each), valhalla (the routing tile
+# extract), tiles0 and tiles1 (the vector basemap in two byte ranges) and rest (configs,
+# fonts, sprites, styles, explorer). check-artifact-sizes.sh proves each shard fits
+# before docker runs. Five places may differ from Dockerfile and nothing else may: this
+# stage's index step, the step that splits the vector tiles (where the plain file copies
+# the whole archive in one line), the tile part server's build stage with the COPY of its
+# binary, the /data COPY block below, and the entrypoint the final stage installs.
+FROM --platform=$BUILDPLATFORM ubuntu:24.04 AS data
+
+# Each shard directory moves to its own root under the same relative path, so its layer
+# lands exactly where the index expects it. The index directory name is a UUID that
+# changes with every import, hence the glob. Only numerically named directories are
+# shards - _state sits beside them and stays with the rest of the index. Anything but
+# exactly 0-4 in exactly one index fails the build: a shard nobody planned a layer for
+# must not slide into the remainder layer unnoticed.
+RUN --mount=type=bind,source=photon-data.tar,target=/tmp/photon-data.tar \
+    set -eu; \
+    mkdir -p /split/photon/photon; \
+    tar -xf /tmp/photon-data.tar -C /split/photon/photon; \
+    cd /split/photon; \
+    idx=$(find photon -type d -name indices); \
+    indexes=$(find $idx -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d " "); \
+    found=$(for d in "$idx"/*/[0-9]*; do basename "$d"; done | sort -n | tr '\n' ' '); \
+    if [ "$indexes" != 1 ] || [ "$found" != "0 1 2 3 4 " ]; then \
+      echo "geocoding index: expected one index with shard directories 0 1 2 3 4, found $indexes index(es) with: $found" >&2; \
+      exit 1; \
+    fi; \
+    for s in 0 1 2 3 4; do \
+      d=$(echo "$idx"/*/"$s"); \
+      mkdir -p "/split/shard$s/$(dirname "$d")"; \
+      mv "$d" "/split/shard$s/$d"; \
+    done
+COPY valhalla.tar /split/valhalla/valhalla.tar
+COPY valhalla.json /split/rest/valhalla.json
+COPY ATTRIBUTION.txt /split/rest/ATTRIBUTION.txt
+
+# Map assets: fonts (Martin cuts glyph PBFs from these at request time), sprite SVG
+# sources, and the style template (rendered by the entrypoint - see entrypoint.sh).
+ADD --checksum=sha256:0c34df072a3fa7efbb7cbf34950e1f971a4447cffe365d3a359e2d4089b958f5 \
+    https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.015/NotoSans-v2.015.zip /tmp/notosans.zip
+ADD --checksum=sha256:69975a0ac8472717870aefeab0a4d52739308d90856b9955313b2ad5e0148d68 \
+    https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/SubsetOTF/KR/NotoSansKR-Regular.otf /split/rest/fonts/NotoSansKR-Regular.otf
+ADD --checksum=sha256:10e85011008108308e6feab0408242acb07804da61ede3d3ff236461ae07ab1b \
+    https://github.com/notofonts/georgian/releases/download/NotoSansGeorgian-v2.005/NotoSansGeorgian-v2.005.zip /tmp/notosansgeorgian.zip
+ADD --checksum=sha256:b4bc74bed10eddeb4f4d7137e19d8c8e7894ccdb00e0ee18d0c450a713c4adcf \
+    https://codeload.github.com/hyperknot/openfreemap-styles/tar.gz/72e1480dfc92858d334647037988bd2591fdb021 /tmp/bright.tar.gz
+ADD --checksum=sha256:0fff84171fdaff48efe3a794a403af6d26598a27986e73e8603c15e37f008712 \
+    https://github.com/maplibre/maplibre-gl-js/releases/download/v6.1.0/dist.zip /tmp/maplibre.zip
+RUN apt-get update && apt-get install -y --no-install-recommends unzip \
+  && rm -rf /var/lib/apt/lists/* \
+  && mkdir -p /split/rest/fonts /split/rest/sprites/bright /split/rest/styles \
+  && unzip -j /tmp/notosans.zip \
+       'NotoSans/hinted/ttf/NotoSans-Regular.ttf' \
+       'NotoSans/hinted/ttf/NotoSans-Bold.ttf' \
+       'NotoSans/hinted/ttf/NotoSans-Italic.ttf' -d /split/rest/fonts \
+  && unzip -j /tmp/notosansgeorgian.zip \
+       'NotoSansGeorgian/hinted/ttf/NotoSansGeorgian-Regular.ttf' -d /split/rest/fonts \
+  && tar -xzf /tmp/bright.tar.gz -C /tmp \
+  # airport_11.svg exists in both icon sets and the two files differ, so the style's own
+  # copy has to land last - the order the style's upstream sprite build uses.
+  && SRC=/tmp/openfreemap-styles-72e1480dfc92858d334647037988bd2591fdb021 \
+  && cp $SRC/styles/liberty/svgs/svgs_iconset/*.svg /split/rest/sprites/bright/ \
+  && cp $SRC/styles/liberty/svgs/svgs_not_in_iconset/*.svg /split/rest/sprites/bright/ \
+  && cp $SRC/styles/bright/icons_unique/*.svg /split/rest/sprites/bright/ \
+  && mkdir -p /split/rest/explorer/vendor \
+  && unzip -qj /tmp/maplibre.zip \
+       'dist/maplibre-gl.mjs' 'dist/maplibre-gl-shared.mjs' \
+       'dist/maplibre-gl-worker.mjs' 'dist/maplibre-gl.css' -d /split/rest/explorer/vendor \
+  && mv /split/rest/explorer/vendor/maplibre-gl.mjs /split/rest/explorer/vendor/maplibre-gl.js
+COPY martin.yaml /split/rest/martin.yaml
+# The vector tiles ship as two layers: the archive is too large for one. split -n 2
+# cuts two equal byte ranges - the tile server reads them rejoined, so where the cut
+# falls inside the archive does not matter - and cmp proves they rejoin to the original
+# byte for byte. The tile server reads the basemap over HTTP from tileparts, which
+# serves the joined parts on loopback, so this image's copy of martin.yaml is rewritten
+# to point there; the build fails if the line it rewrites has changed, rather than
+# shipping a config that still names the whole file.
+RUN --mount=type=bind,source=tiles.pmtiles,target=/tmp/tiles.pmtiles \
+    set -eu; \
+    mkdir -p /tmp/parts /split/tiles0/tiles-parts /split/tiles1/tiles-parts; \
+    split -n 2 -d -a 1 /tmp/tiles.pmtiles /tmp/parts/; \
+    mv /tmp/parts/0 /split/tiles0/tiles-parts/0; \
+    mv /tmp/parts/1 /split/tiles1/tiles-parts/1; \
+    cat /split/tiles0/tiles-parts/0 /split/tiles1/tiles-parts/1 | cmp - /tmp/tiles.pmtiles; \
+    grep -qx '    basemap: /data/tiles.pmtiles' /split/rest/martin.yaml; \
+    sed -i -e 's|^    basemap: /data/tiles.pmtiles$|    basemap: http://127.0.0.1:3001/tiles.pmtiles|' \
+      -e 's|^pmtiles:$|pmtiles:\n  allow_http: true|' /split/rest/martin.yaml; \
+    grep -qx '  allow_http: true' /split/rest/martin.yaml; \
+    grep -qx '    basemap: http://127.0.0.1:3001/tiles.pmtiles' /split/rest/martin.yaml
+COPY assets/bright.json.tmpl /split/rest/styles/bright.json.tmpl
+COPY explorer/ /split/rest/explorer/
+COPY explorer-countries.json /split/rest/explorer/countries.json
+
+FROM ubuntu:24.04
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openjdk-21-jre-headless \
+    curl \
+    libuv1t64 \
+    libvulkan1 \
+    mesa-vulkan-drivers \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_TOOL_OPTIONS="-Xmx1g"
+
+# Valhalla binary and all runtime libs
+COPY --from=valhalla /deps/bin/valhalla_service /usr/local/bin/valhalla_service
+COPY --from=valhalla /deps/lib/ /usr/local/lib/valhalla-deps/
+
+# Ensure the dynamic linker can find the copied libs
+RUN echo "/usr/local/lib/valhalla-deps" > /etc/ld.so.conf.d/00-valhalla.conf && ldconfig
+RUN ! ldd /usr/local/bin/valhalla_service | grep -q 'not found'
+
+COPY --from=martin-fetch /out/martin /usr/local/bin/martin
+COPY --from=gateway-build /out/gateway /usr/local/bin/gateway
+COPY --from=tileparts-build /out/tileparts /usr/local/bin/tileparts
+
+ADD --checksum=sha256:6ea66d598a3f6fc1b59b0f81ad4f8abee72ccdb9d3db03bc12008974cdebd58d --chmod=644 \
+    https://github.com/komoot/photon/releases/download/1.2.1/photon-1.2.1.jar /opt/photon.jar
+
+RUN groupadd -r -g 999 getmapstack && useradd -r -u 999 -g 999 -d /data -s /sbin/nologin getmapstack
+
+# /data arrives as ten layers: the geocoding index as one layer per shard plus its
+# remainder, the vector tiles as two byte ranges, and one layer for each other
+# component. --link builds each layer independently of the base image: both platforms
+# read the same data stage and produce byte-identical layers, keeping the registry dedup
+# that a plain second COPY into /data used to break by bumping the directory mtime. The
+# --chown must stay numeric (a --link layer cannot resolve names against /etc/passwd)
+# and also owns the /data entry itself in every layer, which keeps the runtime user's
+# home writable - the geocoder creates lock files under /data/photon at startup.
+COPY --link --chown=999:999 --from=data /split/photon /data
+COPY --link --chown=999:999 --from=data /split/shard0 /data
+COPY --link --chown=999:999 --from=data /split/shard1 /data
+COPY --link --chown=999:999 --from=data /split/shard2 /data
+COPY --link --chown=999:999 --from=data /split/shard3 /data
+COPY --link --chown=999:999 --from=data /split/shard4 /data
+COPY --link --chown=999:999 --from=data /split/valhalla /data
+COPY --link --chown=999:999 --from=data /split/tiles0 /data
+COPY --link --chown=999:999 --from=data /split/tiles1 /data
+COPY --link --chown=999:999 --from=data /split/rest /data
+
+# Third-party license notices for the cherry-picked binary and libraries
+COPY --from=valhalla /deps/doc/ /usr/share/doc/valhalla-deps/
+COPY THIRD_PARTY_LICENSES /usr/share/doc/getmapstack/THIRD_PARTY_LICENSES
+
+COPY --chmod=755 entrypoint-multilayer.sh /entrypoint.sh
+USER getmapstack
+
+# The SPDX expression covers everything the image distributes, not just this project's own
+# code: map data (ODbL-1.0), the engines and their dependencies, the tile server
+# (MIT OR Apache-2.0), the fonts (OFL-1.1) and the map style with its icons (BSD-3-Clause
+# code, CC-BY-4.0 design, CC0-1.0 icons). Keep it in step with THIRD_PARTY_LICENSES.
+LABEL org.opencontainers.image.source="https://github.com/roma8ok/getmapstack" \
+      org.opencontainers.image.licenses="MIT AND Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND ODbL-1.0 AND OFL-1.1 AND CC-BY-4.0 AND CC0-1.0 AND (MIT OR Apache-2.0)"
+
+EXPOSE 4326
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5m \
+  CMD gateway --healthcheck
+
+ENTRYPOINT ["/entrypoint.sh"]
